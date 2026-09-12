@@ -1,0 +1,27 @@
+{
+  "name": "finance-copilot-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:seed": "node src/db/seed.js",
+    "db:categorize": "node src/db/categorize-existing.js",
+    "test:categorizer": "node src/services/categorizer.test.js",
+    "test:rag-retrieval": "node src/services/ragService.test.js",
+    "test:rag-answer": "node src/services/ragAnswerService.test.js",
+    "test:chat": "node src/routes/chat.test.js",
+    "test:budgets": "node src/routes/budgets.test.js",
+    "test:rag-answer-groq": "node src/services/rag-answer-groq-test.js",
+    "test:groq": "node src/services/groq-test.js",
+    "test:groq-categorization": "node src/services/groq-categorization-test.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "groq-sdk": "^1.6.0"
+  }
+}

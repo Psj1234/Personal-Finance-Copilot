@@ -1,0 +1,185 @@
+date,merchant,amount,type,category,raw_description
+2025-10-01,Acme Technologies Salary,125000,income,Salary,Monthly salary credit
+2025-10-02,House Rent,28000,expense,Rent,October apartment rent
+2025-10-03,BESCOM Electricity,1850,expense,Bills,Electricity bill
+2025-10-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2025-10-05,Swiggy,642,expense,Food,Dinner order
+2025-10-06,Zomato,488,expense,Food,Lunch delivery
+2025-10-07,BigBasket,2380,expense,Food,Monthly groceries
+2025-10-08,DMart,3165,expense,Food,Household groceries
+2025-10-09,Zepto,574,expense,Food,Quick grocery delivery
+2025-10-10,Blinkit,386,expense,Food,Snacks and essentials
+2025-10-11,Uber,328,expense,Transport,Cab to office
+2025-10-12,Ola,245,expense,Transport,Cab ride
+2025-10-13,Uber,412,expense,Transport,Airport cab
+2025-10-14,Amazon,2199,expense,Shopping,Kitchen supplies
+2025-10-15,Flipkart,3890,expense,Shopping,Electronics purchase
+2025-10-16,Netflix,649,expense,Entertainment,Monthly subscription
+2025-10-17,Spotify,119,expense,Entertainment,Music subscription
+2025-10-18,BookMyShow,860,expense,Entertainment,Movie tickets
+2025-10-19,IndiGo,6420,expense,Travel,Flight booking
+2025-10-20,Air India,7850,expense,Travel,Flight booking
+2025-10-21,Apollo Pharmacy,740,expense,Healthcare,Prescription medicines
+2025-10-22,Practo,1200,expense,Healthcare,Doctor consultation
+2025-10-23,Water Board,620,expense,Bills,Water bill
+2025-10-24,Swiggy,735,expense,Food,Weekend dinner
+2025-10-25,Amazon,1290,expense,Shopping,Books and supplies
+2025-10-26,Uber,286,expense,Transport,Weekend cab
+2025-10-27,Ola,198,expense,Transport,Auto ride
+2025-10-28,Neighbourhood Cafe,560,expense,Food,Coffee and breakfast
+2025-10-29,Metro Card Recharge,600,expense,Transport,Metro commute
+2025-10-30,Amazon Prime,299,expense,Entertainment,Annual membership installment
+2025-10-31,Cash Withdrawal,3000,expense,Other,Household cash expenses
+2025-11-01,Acme Technologies Salary,125000,income,Salary,Monthly salary credit
+2025-11-02,House Rent,28000,expense,Rent,November apartment rent
+2025-11-03,BESCOM Electricity,2140,expense,Bills,Electricity bill
+2025-11-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2025-11-05,Swiggy,584,expense,Food,Dinner order
+2025-11-06,Zomato,712,expense,Food,Lunch delivery
+2025-11-07,BigBasket,2745,expense,Food,Monthly groceries
+2025-11-08,DMart,2890,expense,Food,Household groceries
+2025-11-09,Zepto,462,expense,Food,Quick grocery delivery
+2025-11-10,Blinkit,528,expense,Food,Snacks and essentials
+2025-11-11,Uber,365,expense,Transport,Cab to office
+2025-11-12,Ola,278,expense,Transport,Cab ride
+2025-11-13,Uber,449,expense,Transport,Airport cab
+2025-11-14,Amazon,1749,expense,Shopping,Home storage
+2025-11-15,Flipkart,5260,expense,Shopping,Winter clothing
+2025-11-16,Netflix,649,expense,Entertainment,Monthly subscription
+2025-11-17,Spotify,119,expense,Entertainment,Music subscription
+2025-11-18,BookMyShow,1120,expense,Entertainment,Movie tickets
+2025-11-19,IndiGo,5840,expense,Travel,Flight booking
+2025-11-20,Air India,6980,expense,Travel,Flight booking
+2025-11-21,Apollo Pharmacy,520,expense,Healthcare,Prescription medicines
+2025-11-22,Practo,950,expense,Healthcare,Doctor consultation
+2025-11-23,Water Board,620,expense,Bills,Water bill
+2025-11-24,Swiggy,890,expense,Food,Family dinner
+2025-11-25,Amazon,2460,expense,Shopping,Work accessories
+2025-11-26,Uber,318,expense,Transport,Evening cab
+2025-11-27,Ola,224,expense,Transport,Auto ride
+2025-11-28,Neighbourhood Cafe,680,expense,Food,Coffee and breakfast
+2025-11-29,Metro Card Recharge,800,expense,Transport,Metro commute
+2025-11-30,Cash Withdrawal,2500,expense,Other,Household cash expenses
+2025-12-01,Acme Technologies Salary,128000,income,Salary,Monthly salary credit
+2025-12-02,House Rent,28000,expense,Rent,December apartment rent
+2025-12-03,BESCOM Electricity,2760,expense,Bills,Electricity bill
+2025-12-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2025-12-05,Swiggy,924,expense,Food,Dinner order
+2025-12-06,Zomato,638,expense,Food,Lunch delivery
+2025-12-07,BigBasket,3210,expense,Food,Monthly groceries
+2025-12-08,DMart,4125,expense,Food,Household groceries
+2025-12-09,Zepto,684,expense,Food,Quick grocery delivery
+2025-12-10,Blinkit,442,expense,Food,Snacks and essentials
+2025-12-11,Uber,392,expense,Transport,Cab to office
+2025-12-12,Ola,310,expense,Transport,Cab ride
+2025-12-13,Uber,520,expense,Transport,Airport cab
+2025-12-14,Amazon,4680,expense,Shopping,Holiday gifts
+2025-12-15,Flipkart,7290,expense,Shopping,Home appliances
+2025-12-16,Netflix,649,expense,Entertainment,Monthly subscription
+2025-12-17,Spotify,119,expense,Entertainment,Music subscription
+2025-12-18,BookMyShow,1480,expense,Entertainment,Movie tickets
+2025-12-19,IndiGo,8120,expense,Travel,Holiday flight
+2025-12-20,Air India,9360,expense,Travel,Holiday flight
+2025-12-21,Apollo Pharmacy,890,expense,Healthcare,Prescription medicines
+2025-12-22,Practo,1500,expense,Healthcare,Doctor consultation
+2025-12-23,Water Board,620,expense,Bills,Water bill
+2025-12-24,Swiggy,1180,expense,Food,Holiday dinner
+2025-12-25,Amazon,1870,expense,Shopping,Gift wrapping supplies
+2025-12-26,Uber,452,expense,Transport,Holiday cab
+2025-12-27,Ola,286,expense,Transport,Auto ride
+2025-12-28,Neighbourhood Cafe,820,expense,Food,Coffee and breakfast
+2025-12-29,Metro Card Recharge,900,expense,Transport,Metro commute
+2025-12-30,Cash Withdrawal,5000,expense,Other,Holiday cash expenses
+2025-12-31,New Year Restaurant,2450,expense,Food,New Year dinner
+2026-01-01,Acme Technologies Salary,128000,income,Salary,Monthly salary credit
+2026-01-02,House Rent,28000,expense,Rent,January apartment rent
+2026-01-03,BESCOM Electricity,1980,expense,Bills,Electricity bill
+2026-01-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2026-01-05,Swiggy,576,expense,Food,Dinner order
+2026-01-06,Zomato,524,expense,Food,Lunch delivery
+2026-01-07,BigBasket,2650,expense,Food,Monthly groceries
+2026-01-08,DMart,3380,expense,Food,Household groceries
+2026-01-09,Zepto,498,expense,Food,Quick grocery delivery
+2026-01-10,Blinkit,354,expense,Food,Snacks and essentials
+2026-01-11,Uber,286,expense,Transport,Cab to office
+2026-01-12,Ola,232,expense,Transport,Cab ride
+2026-01-13,Uber,384,expense,Transport,Airport cab
+2026-01-14,Amazon,2760,expense,Shopping,Storage organizers
+2026-01-15,Flipkart,3120,expense,Shopping,Clothing purchase
+2026-01-16,Netflix,649,expense,Entertainment,Monthly subscription
+2026-01-17,Spotify,119,expense,Entertainment,Music subscription
+2026-01-18,BookMyShow,740,expense,Entertainment,Movie tickets
+2026-01-19,IndiGo,4580,expense,Travel,Flight booking
+2026-01-20,Air India,6240,expense,Travel,Flight booking
+2026-01-21,Apollo Pharmacy,680,expense,Healthcare,Prescription medicines
+2026-01-22,Practo,1100,expense,Healthcare,Doctor consultation
+2026-01-23,Water Board,620,expense,Bills,Water bill
+2026-01-24,Swiggy,698,expense,Food,Weekend dinner
+2026-01-25,Amazon,980,expense,Shopping,Books and supplies
+2026-01-26,Uber,264,expense,Transport,Weekend cab
+2026-01-27,Ola,216,expense,Transport,Auto ride
+2026-01-28,Neighbourhood Cafe,490,expense,Food,Coffee and breakfast
+2026-01-29,Metro Card Recharge,600,expense,Transport,Metro commute
+2026-01-30,Cash Withdrawal,2200,expense,Other,Household cash expenses
+2026-01-31,Local Repair Shop,850,expense,Other,Small home repair
+2026-02-01,Acme Technologies Salary,128000,income,Salary,Monthly salary credit
+2026-02-02,House Rent,28000,expense,Rent,February apartment rent
+2026-02-03,BESCOM Electricity,2310,expense,Bills,Electricity bill
+2026-02-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2026-02-05,Swiggy,684,expense,Food,Dinner order
+2026-02-06,Zomato,592,expense,Food,Lunch delivery
+2026-02-07,BigBasket,2890,expense,Food,Monthly groceries
+2026-02-08,DMart,3540,expense,Food,Household groceries
+2026-02-09,Zepto,526,expense,Food,Quick grocery delivery
+2026-02-10,Blinkit,418,expense,Food,Snacks and essentials
+2026-02-11,Uber,342,expense,Transport,Cab to office
+2026-02-12,Ola,264,expense,Transport,Cab ride
+2026-02-13,Uber,426,expense,Transport,Airport cab
+2026-02-14,Amazon,1980,expense,Shopping,Kitchen supplies
+2026-02-15,Flipkart,4480,expense,Shopping,Electronics purchase
+2026-02-16,Netflix,649,expense,Entertainment,Monthly subscription
+2026-02-17,Spotify,119,expense,Entertainment,Music subscription
+2026-02-18,BookMyShow,980,expense,Entertainment,Movie tickets
+2026-02-19,IndiGo,6720,expense,Travel,Flight booking
+2026-02-20,Air India,7460,expense,Travel,Flight booking
+2026-02-21,Apollo Pharmacy,760,expense,Healthcare,Prescription medicines
+2026-02-22,Practo,1300,expense,Healthcare,Doctor consultation
+2026-02-23,Water Board,620,expense,Bills,Water bill
+2026-02-24,Swiggy,812,expense,Food,Family dinner
+2026-02-25,Amazon,1540,expense,Shopping,Office supplies
+2026-02-26,Uber,298,expense,Transport,Evening cab
+2026-02-27,Ola,208,expense,Transport,Auto ride
+2026-02-28,Neighbourhood Cafe,610,expense,Food,Coffee and breakfast
+2026-02-28,Metro Card Recharge,750,expense,Transport,Metro commute
+2026-02-28,Cash Withdrawal,2800,expense,Other,Household cash expenses
+2026-03-01,Acme Technologies Salary,132000,income,Salary,Monthly salary credit
+2026-03-02,House Rent,28000,expense,Rent,March apartment rent
+2026-03-03,BESCOM Electricity,2070,expense,Bills,Electricity bill
+2026-03-04,Airtel Xstream,999,expense,Bills,Home internet bill
+2026-03-05,Swiggy,618,expense,Food,Dinner order
+2026-03-06,Zomato,476,expense,Food,Lunch delivery
+2026-03-07,BigBasket,3020,expense,Food,Monthly groceries
+2026-03-08,DMart,3675,expense,Food,Household groceries
+2026-03-09,Zepto,596,expense,Food,Quick grocery delivery
+2026-03-10,Blinkit,474,expense,Food,Snacks and essentials
+2026-03-11,Uber,354,expense,Transport,Cab to office
+2026-03-12,Ola,252,expense,Transport,Cab ride
+2026-03-13,Uber,438,expense,Transport,Airport cab
+2026-03-14,Amazon,2350,expense,Shopping,Home supplies
+2026-03-15,Flipkart,3899,expense,Shopping,Clothing purchase
+2026-03-16,Netflix,649,expense,Entertainment,Monthly subscription
+2026-03-17,Spotify,119,expense,Entertainment,Music subscription
+2026-03-18,BookMyShow,1260,expense,Entertainment,Movie tickets
+2026-03-19,IndiGo,5920,expense,Travel,Flight booking
+2026-03-20,Air India,8140,expense,Travel,Flight booking
+2026-03-21,Apollo Pharmacy,640,expense,Healthcare,Prescription medicines
+2026-03-22,Practo,1250,expense,Healthcare,Doctor consultation
+2026-03-23,Water Board,620,expense,Bills,Water bill
+2026-03-24,Swiggy,756,expense,Food,Weekend dinner
+2026-03-25,Amazon,1760,expense,Shopping,Books and supplies
+2026-03-26,Uber,324,expense,Transport,Evening cab
+2026-03-27,Ola,236,expense,Transport,Auto ride
+2026-03-28,Neighbourhood Cafe,540,expense,Food,Coffee and breakfast
+2026-03-29,Metro Card Recharge,800,expense,Transport,Metro commute
+2026-03-30,Cash Withdrawal,2600,expense,Other,Household cash expenses
+2026-03-31,Local Repair Shop,1250,expense,Other,Small home repair
