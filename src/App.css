@@ -1,6 +1,6 @@
 :root {
   --ink: #1f3029;
-  --muted: #758078;
+  --muted: #5f6d64;
   --line: #dfe7dc;
   --paper: #f5f7f2;
   --surface: #ffffff;
@@ -18,6 +18,34 @@ body { background: var(--paper); color: var(--ink); }
 
 button, input, select { font: inherit; }
 button { cursor: pointer; }
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.header-nav a:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.lang-btn:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.add-budget-button:focus-visible,
+.submit-button:focus-visible,
+.budget-action-btn:focus-visible,
+.budget-actions button:focus-visible,
+.question-suggestions button:focus-visible,
+.chat-composer button:focus-visible,
+.error-banner button:focus-visible,
+.budget-error button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
 
 .app-shell { min-height: 100vh; }
 .dashboard-header,
@@ -85,17 +113,60 @@ main { padding: 42px 0 70px; }
 .date-stamp { gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 20px; color: var(--muted); background: rgba(255,255,255,.65); font-size: 11px; font-weight: 700; }
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--green-soft); }
 
-.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
-.summary-card { min-height: 143px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
-.summary-card-topline { justify-content: space-between; color: var(--muted); font-size: 11px; font-weight: 700; }
-.card-dot, .category-rank { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; align-items: stretch; }
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 148px;
+  height: 100%;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.summary-card-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.summary-card-topline span:first-child { flex: 1; }
+.card-dot, .category-rank { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 .summary-card.expense .card-dot { background: var(--coral); }
 .summary-card.balance .card-dot { background: var(--gold); }
-.category-rank { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; color: var(--green); background: var(--green-soft); font-size: 9px; }
-.summary-card > strong { display: block; margin: 22px 0 8px; color: var(--ink); font: 700 25px/1 Georgia, serif; letter-spacing: -.02em; }
+.category-rank { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; color: var(--green); background: var(--green-soft); font-size: 9px; flex-shrink: 0; }
+.summary-card > strong {
+  display: block;
+  margin: 14px 0 8px;
+  color: var(--ink);
+  font: 700 25px/1.15 Georgia, serif;
+  letter-spacing: -.02em;
+  word-break: break-word;
+}
 .summary-card.income > strong { color: var(--green); }
 .summary-card.expense > strong { color: var(--coral); }
-.summary-card > small { color: var(--muted); font-size: 11px; }
+.summary-card > small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  margin-top: auto;
+}
+
+#overview,
+#transactions,
+#add-transaction,
+#budgets,
+#copilot,
+.panel {
+  scroll-margin-top: 24px;
+}
 
 .dashboard-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; margin-bottom: 18px; }
 .lower-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
@@ -293,8 +364,9 @@ main { padding: 42px 0 70px; }
   .welcome-band h2 { font-size: 31px; }
   .date-stamp { display: inline-flex; margin-top: 18px; }
   .summary-grid { gap: 10px; }
-  .summary-card { min-height: 126px; padding: 15px; }
-  .summary-card > strong { margin-top: 18px; font-size: 20px; }
+  .summary-card { min-height: 136px; padding: 16px; }
+  .summary-card-topline { min-height: 26px; }
+  .summary-card > strong { margin: 10px 0 6px; font-size: 20px; }
   .panel { padding: 18px 15px; }
   .category-content { display: block; }
   .donut-wrap { width: 100%; height: 210px; }
