@@ -77,7 +77,44 @@ Once started, open your browser at:
 
 ---
 
-### 3. Import the Workflow
+### 3. Configure Authentication
+
+`GET /api/digest/weekly` is a secured endpoint requiring standard Bearer token authentication (`Authorization: Bearer <token>`).
+
+The backend derives the user account for the digest **strictly from the authenticated token** (`request.user.id`). Client-supplied `userId` query parameters are rejected/ignored to prevent identity spoofing.
+
+#### Obtaining an Auth Token
+You can obtain an authentication token for the demo account (`aarav@example.com`) or any registered user via the login endpoint:
+```bash
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"aarav@example.com\",\"password\":\"password123\"}"
+```
+Copy the returned `token` from the JSON response.
+
+#### Supplying the Token to n8n
+The workflow is pre-configured with zero hardcoded credentials:
+`Authorization: ={{ 'Bearer ' + ($env.FINANCE_COPILOT_API_TOKEN || '') }}`
+
+You can supply the token in either of two ways:
+- **Option A (Environment Variable - Recommended)**:
+  Set the environment variable before starting n8n:
+  - PowerShell (Windows):
+    ```powershell
+    $env:FINANCE_COPILOT_API_TOKEN = "<your_token_here>"
+    npx n8n
+    ```
+  - Bash / macOS / Linux:
+    ```bash
+    export FINANCE_COPILOT_API_TOKEN="<your_token_here>"
+    npx n8n
+    ```
+- **Option B (n8n Web UI)**:
+  Open the **Fetch Weekly Digest** node in the n8n editor, navigate to **Headers**, and enter `Bearer <your_token_here>` directly.
+
+---
+
+### 4. Import the Workflow
 
 1. In the n8n UI, navigate to **Workflows**.
 2. Click **Add Workflow** (top right) or open the workflow menu (`...`).
@@ -87,7 +124,7 @@ Once started, open your browser at:
 
 ---
 
-### 4. Testing the Workflow Manually
+### 5. Testing the Workflow Manually
 
 1. Click **Test step** or **Execute workflow** in n8n.
 2. The workflow will:

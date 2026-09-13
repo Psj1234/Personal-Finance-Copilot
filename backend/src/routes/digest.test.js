@@ -3,6 +3,8 @@ import express from 'express'
 import db from '../db/database.js'
 import { generateWeeklyDigest } from '../services/digestService.js'
 import { createDigestRouter } from './digest.js'
+import { authenticate } from '../middleware/auth.js'
+import { createToken } from '../services/authService.js'
 
 let failureTriggered = false
 let assertionCount = 0
@@ -16,10 +18,13 @@ function testEqual(actual, expected, message) {
   assertionCount++
 }
 
+const testToken = createToken({ userId: 1, email: 'aarav@example.com' })
+
 const app = express()
 app.use(express.json())
 app.use(
   '/api/digest',
+  authenticate,
   createDigestRouter({
     generateWeeklyDigest: (opts) => {
       if (failureTriggered) {
@@ -45,8 +50,15 @@ const server = await new Promise((resolve) => {
 const { port } = server.address()
 const baseUrl = `http://localhost:${port}/api/digest/weekly`
 
-async function get(queryString = '') {
-  const response = await fetch(`${baseUrl}${queryString}`)
+async function get(queryString = '', options = {}) {
+  const headers = {
+    Authorization: options.noAuth ? '' : (options.token ? `Bearer ${options.token}` : `Bearer ${testToken}`),
+    ...(options.headers || {}),
+  }
+  if (options.rawAuth !== undefined) {
+    headers.Authorization = options.rawAuth
+  }
+  const response = await fetch(`${baseUrl}${queryString}`, { headers })
   return {
     status: response.status,
     body: await response.json(),
@@ -117,6 +129,86 @@ try {
   testAssert(!JSON.stringify(res500.body).includes('gsk_'), 'Does not leak API key')
   testAssert(!JSON.stringify(res500.body).includes('database SQL'), 'Does not leak SQL details')
   testAssert(!JSON.stringify(res500.body).includes('stack'), 'Does not leak stack trace')
+  failureTriggered = false
+
+  // 9. 401: Missing Authorization header
+  const resNoAuth = await get('?startDate=2026-03-25&endDate=2026-03-31', { noAuth: true })
+  testEqual(resNoAuth.status, 401, 'Returns 401 when no token provided')
+  testAssert(resNoAuth.body.error.includes('Authentication required'), 'Mentions authentication required')
+
+  // 10. 401: Malformed Authorization header
+  const resMalformedAuth = await get('?startDate=2026-03-25&endDate=2026-03-31', { rawAuth: 'Basic abc123' })
+  testEqual(resMalformedAuth.status, 401, 'Returns 401 on malformed scheme')
+
+  // 11. 401: Invalid signature
+  const resInvalidSig = await get('?startDate=2026-03-25&endDate=2026-03-31', { rawAuth: `Bearer ${testToken}tampered` })
+  testEqual(resInvalidSig.status, 401, 'Returns 401 on invalid token signature')
+
+  // 12. 401: Expired token
+  const expiredToken = createToken({ userId: 1, email: 'aarav@example.com' }, { expiresIn: -10 })
+  const resExpired = await get('?startDate=2026-03-25&endDate=2026-03-31', { token: expiredToken })
+  testEqual(resExpired.status, 401, 'Returns 401 on expired token')
+
+  // 13. Multi-User Isolation in Digest API
+  const oldUsers = db.prepare("SELECT id FROM users WHERE email IN ('digest_api_a@test.com', 'digest_api_b@test.com')").all()
+  for (const u of oldUsers) {
+    db.prepare('DELETE FROM transactions WHERE user_id = ?').run(u.id)
+    db.prepare('DELETE FROM budgets WHERE user_id = ?').run(u.id)
+    db.prepare('DELETE FROM users WHERE id = ?').run(u.id)
+  }
+
+  const uARes = db.prepare(`
+    INSERT INTO users (name, email, password_hash, currency, locale)
+    VALUES ('Digest API User A', 'digest_api_a@test.com', 'hashA', 'INR', 'en')
+  `).run()
+  const uAId = uARes.lastInsertRowid
+
+  const uBRes = db.prepare(`
+    INSERT INTO users (name, email, password_hash, currency, locale)
+    VALUES ('Digest API User B', 'digest_api_b@test.com', 'hashB', 'INR', 'en')
+  `).run()
+  const uBId = uBRes.lastInsertRowid
+
+  const tokenA = createToken({ userId: uAId, email: 'digest_api_a@test.com' })
+  const tokenB = createToken({ userId: uBId, email: 'digest_api_b@test.com' })
+
+  // Insert distinct transactions for A and B
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-02', 'Alpha Boutique', 3500, 'expense', 'Shopping', 'A Shopping')
+  `).run(uAId)
+
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-02', 'Beta Flight', 18000, 'expense', 'Travel', 'B Travel')
+  `).run(uBId)
+
+  // Digest for A
+  const digestApiA = await get('?startDate=2026-05-01&endDate=2026-05-07', { token: tokenA })
+  testEqual(digestApiA.status, 200, 'User A returns 200')
+  testEqual(digestApiA.body.user.name, 'Digest API User A', 'User A name matches')
+  testEqual(digestApiA.body.summary.totalExpenses, 3500, 'User A expenses is 3500')
+  testEqual(digestApiA.body.largestExpense.merchant, 'Alpha Boutique', 'User A largest expense is Alpha Boutique')
+
+  // Digest for B
+  const digestApiB = await get('?startDate=2026-05-01&endDate=2026-05-07', { token: tokenB })
+  testEqual(digestApiB.status, 200, 'User B returns 200')
+  testEqual(digestApiB.body.user.name, 'Digest API User B', 'User B name matches')
+  testEqual(digestApiB.body.summary.totalExpenses, 18000, 'User B expenses is 18000')
+  testEqual(digestApiB.body.largestExpense.merchant, 'Beta Flight', 'User B largest expense is Beta Flight')
+
+  // 14. Spoofing Prevention: passing ?userId= in query is ignored and cannot leak other user's data
+  const spoofAttempt = await get(`?startDate=2026-05-01&endDate=2026-05-07&userId=${uBId}`, { token: tokenA })
+  testEqual(spoofAttempt.status, 200, 'User A spoof query returns 200')
+  testEqual(spoofAttempt.body.user.name, 'Digest API User A', 'Returned digest is strictly User A, ignoring ?userId query spoof')
+  testEqual(spoofAttempt.body.summary.totalExpenses, 3500, 'User A expenses strictly returned despite spoof query')
+
+  // Cleanup test users
+  for (const id of [uAId, uBId]) {
+    db.prepare('DELETE FROM transactions WHERE user_id = ?').run(id)
+    db.prepare('DELETE FROM budgets WHERE user_id = ?').run(id)
+    db.prepare('DELETE FROM users WHERE id = ?').run(id)
+  }
 
   console.log(`Digest API route tests passed: ${assertionCount} assertions`)
 } finally {

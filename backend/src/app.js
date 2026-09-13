@@ -16,7 +16,7 @@ app.use('/api/analytics', authenticate, analyticsRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/budgets', authenticate, budgetsRouter)
 app.use('/api/chat', authenticate, chatRouter)
-app.use('/api/digest', digestRouter)
+app.use('/api/digest', authenticate, digestRouter)
 app.use('/api/transactions', authenticate, transactionsRouter)
 
 app.get('/api/health', (_request, response) => {

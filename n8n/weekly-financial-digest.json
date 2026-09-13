@@ -42,6 +42,15 @@
             }
           ]
         },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + ($env.FINANCE_COPILOT_API_TOKEN || '') }}"
+            }
+          ]
+        },
         "options": {}
       },
       "id": "b3e2154a-7140-4279-8d76-f5a01948d902",

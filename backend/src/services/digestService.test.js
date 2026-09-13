@@ -21,6 +21,7 @@ try {
   const digest = generateWeeklyDigest({
     startDate: '2026-03-25',
     endDate: '2026-03-31',
+    userId: 1,
   })
 
   testEqual(digest.period.startDate, '2026-03-25', 'Period start date matches')
@@ -72,6 +73,7 @@ try {
   const singleDayDigest = generateWeeklyDigest({
     startDate: '2026-03-31',
     endDate: '2026-03-31',
+    userId: 1,
   })
   testEqual(singleDayDigest.period.days, 1, 'Single day date range is 1 day')
   testEqual(singleDayDigest.summary.transactionCount, 1, '1 transaction on 2026-03-31')
@@ -82,6 +84,7 @@ try {
   const incomeDigest = generateWeeklyDigest({
     startDate: '2026-03-01',
     endDate: '2026-03-05',
+    userId: 1,
   })
   testEqual(incomeDigest.summary.totalIncome, 132000, 'Salary income recorded is 132000')
   testEqual(incomeDigest.summary.totalExpenses, 31687, 'Expenses total 31687')
@@ -92,6 +95,7 @@ try {
   const emptyDigest = generateWeeklyDigest({
     startDate: '2026-04-01',
     endDate: '2026-04-07',
+    userId: 1,
   })
   testEqual(emptyDigest.summary.totalIncome, 0, 'Zero income in empty week')
   testEqual(emptyDigest.summary.totalExpenses, 0, 'Zero expenses in empty week')
@@ -103,7 +107,7 @@ try {
 
   // 9. Validation error: missing startDate
   assert.throws(
-    () => generateWeeklyDigest({ endDate: '2026-03-31' }),
+    () => generateWeeklyDigest({ endDate: '2026-03-31', userId: 1 }),
     (err) => err.statusCode === 400 && err.message.includes('startDate must be a valid date'),
     'Throws 400 on missing startDate',
   )
@@ -111,7 +115,7 @@ try {
 
   // 10. Validation error: invalid format
   assert.throws(
-    () => generateWeeklyDigest({ startDate: '25-03-2026', endDate: '2026-03-31' }),
+    () => generateWeeklyDigest({ startDate: '25-03-2026', endDate: '2026-03-31', userId: 1 }),
     (err) => err.statusCode === 400 && err.message.includes('YYYY-MM-DD format'),
     'Throws 400 on invalid format',
   )
@@ -119,7 +123,7 @@ try {
 
   // 11. Validation error: non-existent calendar date
   assert.throws(
-    () => generateWeeklyDigest({ startDate: '2026-02-31', endDate: '2026-03-31' }),
+    () => generateWeeklyDigest({ startDate: '2026-02-31', endDate: '2026-03-31', userId: 1 }),
     (err) => err.statusCode === 400 && err.message.includes('YYYY-MM-DD format'),
     'Throws 400 on non-existent calendar date',
   )
@@ -127,7 +131,7 @@ try {
 
   // 12. Validation error: startDate after endDate
   assert.throws(
-    () => generateWeeklyDigest({ startDate: '2026-03-31', endDate: '2026-03-25' }),
+    () => generateWeeklyDigest({ startDate: '2026-03-31', endDate: '2026-03-25', userId: 1 }),
     (err) => err.statusCode === 400 && err.message.includes('startDate must be earlier than or equal to endDate'),
     'Throws 400 when startDate is after endDate',
   )
@@ -140,6 +144,132 @@ try {
     'Throws 404 on invalid user id',
   )
   assertionCount++
+
+  // 14. Validation error: missing/invalid userId (fails safely, no demo fallback)
+  assert.throws(
+    () => generateWeeklyDigest({ startDate: '2026-03-25', endDate: '2026-03-31' }),
+    (err) => err.statusCode === 400 && err.message.includes('A valid userId is required'),
+    'Throws 400 when userId is omitted, refusing demo user fallback',
+  )
+  assertionCount++
+
+  assert.throws(
+    () => generateWeeklyDigest({ startDate: '2026-03-25', endDate: '2026-03-31', userId: 'invalid' }),
+    (err) => err.statusCode === 400 && err.message.includes('A valid userId is required'),
+    'Throws 400 on non-numeric userId',
+  )
+  assertionCount++
+
+  // 15. Multi-User Isolation in Digest Service
+  // Clean up any old test users
+  const oldUsers = db.prepare("SELECT id FROM users WHERE email IN ('digest_user_a@test.com', 'digest_user_b@test.com')").all()
+  for (const u of oldUsers) {
+    db.prepare('DELETE FROM transactions WHERE user_id = ?').run(u.id)
+    db.prepare('DELETE FROM budgets WHERE user_id = ?').run(u.id)
+    db.prepare('DELETE FROM users WHERE id = ?').run(u.id)
+  }
+
+  const userARes = db.prepare(`
+    INSERT INTO users (name, email, password_hash, currency, locale)
+    VALUES ('Digest User A', 'digest_user_a@test.com', 'hashA', 'INR', 'en')
+  `).run()
+  const userAId = userARes.lastInsertRowid
+
+  const userBRes = db.prepare(`
+    INSERT INTO users (name, email, password_hash, currency, locale)
+    VALUES ('Digest User B', 'digest_user_b@test.com', 'hashB', 'INR', 'en')
+  `).run()
+  const userBId = userBRes.lastInsertRowid
+
+  // User A transactions (2026-05-01 to 2026-05-07)
+  // Income: 20000, Expenses: 3500 (Rent: 3000, Food: 500)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-01', 'Salary Alpha', 20000, 'income', 'Salary', 'Income A')
+  `).run(userAId)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-02', 'Landlord A', 3000, 'expense', 'Rent', 'Rent A')
+  `).run(userAId)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-03', 'Cafe Alpha', 500, 'expense', 'Food', 'Food A')
+  `).run(userAId)
+
+  // User A Budget: Rent (monthly limit 3500) -> spent 3000 -> 85.71% (warning alert)
+  db.prepare(`
+    INSERT INTO budgets (user_id, category, monthly_limit)
+    VALUES (?, 'Rent', 3500)
+  `).run(userAId)
+
+  // User B transactions (2026-05-01 to 2026-05-07)
+  // Income: 45000, Expenses: 8200 (Shopping: 8000, Transport: 200)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-01', 'Salary Beta', 45000, 'income', 'Salary', 'Income B')
+  `).run(userBId)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-02', 'Mall Beta', 8000, 'expense', 'Shopping', 'Shopping B')
+  `).run(userBId)
+  db.prepare(`
+    INSERT INTO transactions (user_id, date, merchant, amount, type, category, raw_description)
+    VALUES (?, '2026-05-03', 'Metro Beta', 200, 'expense', 'Transport', 'Transport B')
+  `).run(userBId)
+
+  // User B Budget: Shopping (monthly limit 7000) -> spent 8000 -> 114.29% (exceeded alert)
+  db.prepare(`
+    INSERT INTO budgets (user_id, category, monthly_limit)
+    VALUES (?, 'Shopping', 7000)
+  `).run(userBId)
+
+  // Generate digest for User A
+  const digestA = generateWeeklyDigest({
+    startDate: '2026-05-01',
+    endDate: '2026-05-07',
+    userId: userAId,
+  })
+
+  testEqual(digestA.user.name, 'Digest User A', 'User A name matches')
+  testEqual(digestA.summary.totalIncome, 20000, 'User A income is 20000')
+  testEqual(digestA.summary.totalExpenses, 3500, 'User A expenses is 3500')
+  testEqual(digestA.summary.netSavings, 16500, 'User A net savings is 16500')
+  testEqual(digestA.summary.transactionCount, 3, 'User A has 3 transactions')
+  testEqual(digestA.largestExpense.merchant, 'Landlord A', 'User A largest expense is Landlord A')
+  testEqual(digestA.largestExpense.amount, 3000, 'User A largest expense amount is 3000')
+  testEqual(digestA.topCategories.length, 2, 'User A has 2 expense categories')
+  testAssert(!digestA.topCategories.some((c) => c.category === 'Shopping'), 'User A has no Shopping category')
+  testEqual(digestA.budgetAlerts.length, 1, 'User A has 1 budget alert')
+  testEqual(digestA.budgetAlerts[0].category, 'Rent', 'User A alert is Rent')
+  testEqual(digestA.budgetAlerts[0].status, 'warning', 'User A alert status is warning')
+
+  // Generate digest for User B
+  const digestB = generateWeeklyDigest({
+    startDate: '2026-05-01',
+    endDate: '2026-05-07',
+    userId: userBId,
+  })
+
+  testEqual(digestB.user.name, 'Digest User B', 'User B name matches')
+  testEqual(digestB.summary.totalIncome, 45000, 'User B income is 45000')
+  testEqual(digestB.summary.totalExpenses, 8200, 'User B expenses is 8200')
+  testEqual(digestB.summary.netSavings, 36800, 'User B net savings is 36800')
+  testEqual(digestB.summary.transactionCount, 3, 'User B has 3 transactions')
+  testEqual(digestB.largestExpense.merchant, 'Mall Beta', 'User B largest expense is Mall Beta')
+  testEqual(digestB.largestExpense.amount, 8000, 'User B largest expense amount is 8000')
+  testEqual(digestB.topCategories.length, 2, 'User B has 2 expense categories')
+  testAssert(!digestB.topCategories.some((c) => c.category === 'Rent'), 'User B has no Rent category')
+  testEqual(digestB.budgetAlerts.length, 1, 'User B has 1 budget alert')
+  testEqual(digestB.budgetAlerts[0].category, 'Shopping', 'User B alert is Shopping')
+  testEqual(digestB.budgetAlerts[0].status, 'exceeded', 'User B alert status is exceeded')
+
+  // Clean up test users
+  const cleanupUsers = [userAId, userBId]
+  for (const id of cleanupUsers) {
+    db.prepare('DELETE FROM transactions WHERE user_id = ?').run(id)
+    db.prepare('DELETE FROM budgets WHERE user_id = ?').run(id)
+    db.prepare('DELETE FROM users WHERE id = ?').run(id)
+  }
 
   console.log(`Weekly digest service tests passed: ${assertionCount} assertions`)
 } finally {

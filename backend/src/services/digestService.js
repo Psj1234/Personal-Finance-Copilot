@@ -43,9 +43,14 @@ export function generateWeeklyDigest(options = {}) {
     throw error
   }
 
-  const user = userId
-    ? database.prepare('SELECT id, name, currency FROM users WHERE id = ?').get(userId)
-    : database.prepare('SELECT id, name, currency FROM users ORDER BY id LIMIT 1').get()
+  const parsedUserId = Number(userId)
+  if (!userId || !Number.isInteger(parsedUserId) || parsedUserId < 1) {
+    const error = new Error('A valid userId is required')
+    error.statusCode = 400
+    throw error
+  }
+
+  const user = database.prepare('SELECT id, name, currency FROM users WHERE id = ?').get(parsedUserId)
 
   if (!user) {
     const error = new Error('User not found')

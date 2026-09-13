@@ -21,10 +21,17 @@ export function createDigestRouter(options = {}) {
         throw error
       }
 
+      const userId = request.user?.id
+      if (!userId) {
+        const error = new Error('Authentication required')
+        error.statusCode = 401
+        throw error
+      }
+
       const digest = digestGenerator({
         startDate,
         endDate,
-        userId: options.userId,
+        userId,
         database: options.database,
       })
 
