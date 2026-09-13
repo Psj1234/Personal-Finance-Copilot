@@ -1,8 +1,21 @@
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../context/AuthContext.jsx'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
+
+function getInitials(name) {
+  if (!name || typeof name !== 'string') return '?'
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '?'
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase()
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
+}
 
 function DashboardHeader() {
   const { t } = useTranslation()
+  const { user, logout } = useAuth()
+
+  const userName = user?.name || ''
+  const initials = getInitials(userName)
 
   return (
     <header className="dashboard-header">
@@ -25,16 +38,23 @@ function DashboardHeader() {
       <div className="header-actions">
         <LanguageSwitcher />
         <div className="profile-chip">
-          <span className="profile-avatar" aria-hidden="true">AM</span>
+          <span className="profile-avatar" aria-hidden="true">{initials}</span>
           <span>
-            <strong>Aarav Mehta</strong>
+            <strong>{userName}</strong>
             <small>{t('header.profileAccount')}</small>
           </span>
         </div>
+        <button
+          type="button"
+          className="btn-logout"
+          onClick={() => logout()}
+          aria-label={t('auth.logout')}
+        >
+          {t('auth.logout')}
+        </button>
       </div>
     </header>
   )
 }
 
 export default DashboardHeader
-

@@ -14,10 +14,35 @@
     "langHi": "हिन्दी"
   },
   "welcome": {
-    "eyebrow": "सुप्रभात, आरव",
+    "eyebrow": "सुप्रभात, {{name}}",
     "heading": "आपका पैसा, अब और भी स्पष्ट।",
     "copy": "क्या आया, क्या गया और कहाँ खर्च हुआ - इसका एक शांत और स्पष्ट दृश्य।",
     "liveDot": "आपके खाते से लाइव"
+  },
+  "auth": {
+    "loginTab": "साइन इन",
+    "registerTab": "खाता बनाएं",
+    "loginTitle": "वापसी पर स्वागत है",
+    "registerTitle": "अपना खाता बनाएं",
+    "loginSubtitle": "अपने व्यक्तिगत वित्तीय डैशबोर्ड तक पहुँचने के लिए साइन इन करें।",
+    "registerSubtitle": "स्पष्ट और सुरक्षित जानकारी के साथ अपने वित्त को ट्रैक करना शुरू करें।",
+    "nameLabel": "पूरा नाम",
+    "namePlaceholder": "उदा. प्रिया शर्मा",
+    "emailLabel": "ईमेल पता",
+    "emailPlaceholder": "उदा. user@example.com",
+    "passwordLabel": "पासवर्ड",
+    "passwordPlaceholder": "कम से कम 6 अक्षर",
+    "loginButton": "साइन इन करें",
+    "registerButton": "खाता बनाएं",
+    "submitting": "कृपया प्रतीक्षा करें...",
+    "demoHint": "डेमो खाता:",
+    "demoCredentials": "aarav@example.com / password123",
+    "logout": "साइन आउट",
+    "sessionExpired": "आपका सत्र समाप्त हो गया है। कृपया पुनः साइन इन करें।",
+    "errNameRequired": "कृपया अपना नाम दर्ज करें।",
+    "errEmailRequired": "कृपया एक मान्य ईमेल पता दर्ज करें।",
+    "errPasswordLength": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    "errGeneric": "प्रमाणीकरण विफल रहा। कृपया विवरण जांचें और पुनः प्रयास करें।"
   },
   "common": {
     "loadErrorTitle": "डैशबोर्ड लोड नहीं हो सका।",

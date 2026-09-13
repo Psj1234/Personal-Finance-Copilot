@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from './context/AuthContext.jsx'
+import AuthView from './components/AuthView.jsx'
 import CategoryBreakdown from './components/CategoryBreakdown.jsx'
 import Budgets from './components/Budgets.jsx'
 import DashboardHeader from './components/DashboardHeader.jsx'
@@ -18,14 +20,14 @@ const emptyDashboard = {
   recentTransactions: [],
 }
 
-function App() {
+function DashboardContent({ user }) {
   const { t } = useTranslation()
   const [dashboard, setDashboard] = useState(emptyDashboard)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  async function loadDashboard() {
+  const loadDashboard = useCallback(async () => {
     setIsLoading(true)
     setError('')
     try {
@@ -36,7 +38,7 @@ function App() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     let isCurrent = true
@@ -81,7 +83,7 @@ function App() {
       <main>
         <section className="welcome-band" id="overview">
           <div>
-            <p className="eyebrow">{t('welcome.eyebrow')}</p>
+            <p className="eyebrow">{t('welcome.eyebrow', { name: user?.name || '' })}</p>
             <h2>{t('welcome.heading')}</h2>
             <p className="welcome-copy">{t('welcome.copy')}</p>
           </div>
@@ -126,6 +128,28 @@ function App() {
       </footer>
     </div>
   )
+}
+
+function App() {
+  const { t } = useTranslation()
+  const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth()
+
+  if (isAuthLoading) {
+    return (
+      <div className="app-shell auth-loading-shell">
+        <div className="loading-state" role="status">
+          <span className="loading-spinner" />
+          {t('common.loadingDashboard')}
+        </div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated || !user) {
+    return <AuthView />
+  }
+
+  return <DashboardContent key={user.id} user={user} />
 }
 
 export default App

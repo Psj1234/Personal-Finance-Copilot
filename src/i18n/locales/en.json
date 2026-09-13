@@ -14,10 +14,35 @@
     "langHi": "हिन्दी"
   },
   "welcome": {
-    "eyebrow": "GOOD MORNING, AARAV",
+    "eyebrow": "GOOD MORNING, {{name}}",
     "heading": "Your money, made clearer.",
     "copy": "A calm view of what came in, what went out, and where it went.",
     "liveDot": "Live from your ledger"
+  },
+  "auth": {
+    "loginTab": "Sign In",
+    "registerTab": "Create Account",
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create your account",
+    "loginSubtitle": "Sign in to access your personal finance dashboard.",
+    "registerSubtitle": "Start tracking your finances with clear, private insights.",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "e.g. Priya Sharma",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "e.g. user@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "loginButton": "Sign In",
+    "registerButton": "Create Account",
+    "submitting": "Please wait...",
+    "demoHint": "Demo account:",
+    "demoCredentials": "aarav@example.com / password123",
+    "logout": "Sign out",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "errNameRequired": "Please enter your name.",
+    "errEmailRequired": "Please enter a valid email address.",
+    "errPasswordLength": "Password must be at least 6 characters long.",
+    "errGeneric": "Authentication failed. Please check your details and try again."
   },
   "common": {
     "loadErrorTitle": "Couldn't load your dashboard.",
