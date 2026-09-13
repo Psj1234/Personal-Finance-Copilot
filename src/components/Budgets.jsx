@@ -185,7 +185,11 @@ function Budgets() {
           <button type="button" onClick={loadBudgets}>{t('common.tryAgain')}</button>
         </div>
       ) : budgets.length === 0 ? (
-        <div className="empty-state budget-empty">{t('budgets.empty')}</div>
+        <div className="panel-empty-state budget-empty" role="status">
+          <div className="panel-empty-mark" aria-hidden="true">🎯</div>
+          <h3>{t('budgets.emptyTitle', 'No budgets yet')}</h3>
+          <p>{t('budgets.emptyDesc', t('budgets.empty'))}</p>
+        </div>
       ) : (
         <div className="budget-grid">
           {budgets.map((budget) => {

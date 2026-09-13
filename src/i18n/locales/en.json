@@ -42,6 +42,8 @@
     "heading": "Income vs expenses",
     "note": "Monthly view",
     "empty": "No monthly activity for this period.",
+    "emptyTitle": "No activity yet",
+    "emptyDesc": "Monthly income and expense trends will appear here once transactions are recorded.",
     "income": "Income",
     "expenses": "Expenses"
   },
@@ -57,6 +59,8 @@
     "heading": "Recent transactions",
     "note": "Latest 5",
     "empty": "No transactions yet. Add your first one to start building your picture.",
+    "emptyTitle": "No transactions yet",
+    "emptyDesc": "Add your first transaction to start building your financial picture.",
     "otherCategory": "Other"
   },
   "transactionForm": {
@@ -90,6 +94,8 @@
     "loading": "Loading budgets...",
     "error": "Budgets are unavailable right now. Please try again.",
     "empty": "No budgets yet. Add one to give your spending a clear boundary.",
+    "emptyTitle": "No budgets yet",
+    "emptyDesc": "Add a budget to set clear boundaries for your monthly spending.",
     "edit": "Edit",
     "delete": "Delete",
     "save": "Save",

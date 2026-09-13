@@ -24,7 +24,11 @@ function SpendChart({ data }) {
         <span className="panel-note">{t('chart.note')}</span>
       </div>
       {data.length === 0 ? (
-        <div className="empty-state chart-empty">{t('chart.empty')}</div>
+        <div className="panel-empty-state chart-empty" role="status">
+          <div className="panel-empty-mark" aria-hidden="true">📊</div>
+          <h3>{t('chart.emptyTitle', 'No activity yet')}</h3>
+          <p>{t('chart.emptyDesc', t('chart.empty'))}</p>
+        </div>
       ) : (
         <div className="chart-wrap">
           <ResponsiveContainer width="100%" height="100%">

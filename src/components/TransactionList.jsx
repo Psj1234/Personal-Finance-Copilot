@@ -20,7 +20,11 @@ function TransactionList({ transactions }) {
         <span className="panel-note">{t('transactions.note')}</span>
       </div>
       {transactions.length === 0 ? (
-        <div className="empty-state">{t('transactions.empty')}</div>
+        <div className="panel-empty-state" role="status">
+          <div className="panel-empty-mark" aria-hidden="true">🧾</div>
+          <h3>{t('transactions.emptyTitle', 'No transactions yet')}</h3>
+          <p>{t('transactions.emptyDesc', t('transactions.empty'))}</p>
+        </div>
       ) : (
         <div className="transaction-list">
           {transactions.map((transaction) => (
