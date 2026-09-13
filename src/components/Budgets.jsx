@@ -199,13 +199,13 @@ function Budgets() {
                   <div className="budget-actions">
                     {isEditing ? (
                       <>
-                        <button type="button" onClick={() => handleUpdate(budget.id)} disabled={isMutating}>{t('budgets.save')}</button>
-                        <button type="button" onClick={() => setEditingId(null)} disabled={isMutating}>{t('budgets.cancel')}</button>
+                        <button type="button" className="budget-action-btn save" onClick={() => handleUpdate(budget.id)} disabled={isMutating} aria-label={`${t('budgets.save')} ${budget.category}`}>{t('budgets.save')}</button>
+                        <button type="button" className="budget-action-btn cancel" onClick={() => setEditingId(null)} disabled={isMutating} aria-label={`${t('budgets.cancel')} ${budget.category}`}>{t('budgets.cancel')}</button>
                       </>
                     ) : (
                       <>
-                        <button type="button" onClick={() => startEditing(budget)}>{t('budgets.edit')}</button>
-                        <button type="button" onClick={() => handleDelete(budget)} disabled={isMutating}>{t('budgets.delete')}</button>
+                        <button type="button" className="budget-action-btn edit" onClick={() => startEditing(budget)} aria-label={`${t('budgets.edit')} ${budget.category}`}>{t('budgets.edit')}</button>
+                        <button type="button" className="budget-action-btn delete" onClick={() => handleDelete(budget)} disabled={isMutating} aria-label={`${t('budgets.delete')} ${budget.category}`}>{t('budgets.delete')}</button>
                       </>
                     )}
                   </div>

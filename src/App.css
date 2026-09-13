@@ -41,7 +41,7 @@ main,
 }
 .eyebrow { margin: 0 0 5px; color: var(--green); font-size: 10px; font-weight: 800; letter-spacing: .16em; }
 .brand-lockup h1 { margin: 0; font: 700 17px/1.1 Georgia, serif; letter-spacing: 0; color: var(--ink); }
-.header-nav { gap: 24px; height: 100%; }
+.header-nav { gap: 18px; height: 100%; }
 .header-nav a { color: var(--muted); font-size: 12px; font-weight: 700; text-decoration: none; height: 100%; display: grid; place-items: center; border-bottom: 2px solid transparent; }
 .header-nav a:hover, .header-nav a.active { color: var(--ink); border-bottom-color: var(--green); }
 .profile-chip { gap: 9px; }
@@ -176,8 +176,14 @@ main { padding: 42px 0 70px; }
 .message-bubble { max-width: min(72%, 580px); padding: 11px 14px; border-radius: 12px 12px 12px 3px; color: var(--ink); background: white; box-shadow: 0 3px 12px rgba(45, 69, 54, .05); }
 .message-row.user .message-bubble { border-radius: 12px 12px 3px 12px; color: white; background: var(--green); }
 .message-label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.message-row.user .message-label { color: #cfe7d8; }
 .message-bubble p { margin: 0; white-space: pre-wrap; font-size: 12px; line-height: 1.55; }
+.formatted-chat-content p { margin: 0 0 8px; font-size: 12px; line-height: 1.55; }
+.formatted-chat-content p:last-child { margin-bottom: 0; }
+.chat-bullet-list, .chat-numbered-list { margin: 6px 0 8px; padding-left: 20px; font-size: 12px; line-height: 1.55; }
+.chat-bullet-list:last-child, .chat-numbered-list:last-child { margin-bottom: 0; }
+.chat-bullet-list li, .chat-numbered-list li { margin-bottom: 4px; }
+.chat-bullet-list li:last-child, .chat-numbered-list li:last-child { margin-bottom: 0; }
+.message-bubble strong { font-weight: 700; color: inherit; }
 .loading-bubble { min-width: 68px; }
 .typing-dots { display: flex; gap: 4px; align-items: center; height: 18px; }
 .typing-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: typing 1s infinite ease-in-out; }
@@ -221,12 +227,37 @@ main { padding: 42px 0 70px; }
 .budget-category h3 { margin: 0; color: var(--ink); font-size: 13px; }
 .budget-category-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
 .warning .budget-category-dot { background: var(--gold); }
-.exceeded .budget-category-dot { background: var(--coral); }
-.budget-actions { gap: 5px; }
-.budget-actions button { padding: 3px 4px; border: 0; color: var(--muted); background: transparent; font-size: 10px; font-weight: 700; }
-.budget-actions button:hover { color: var(--green); }
-.budget-actions button:last-child:hover { color: var(--coral); }
-.budget-amounts { justify-content: space-between; align-items: end; gap: 8px; margin: 22px 0 13px; }
+.budget-actions { display: flex; align-items: center; gap: 6px; }
+.budget-actions button, .budget-action-btn {
+  min-height: 28px;
+  min-width: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  background: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s ease;
+}
+.budget-actions button:hover, .budget-action-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-soft);
+}
+.budget-actions button.delete:hover, .budget-action-btn.delete:hover,
+.budget-actions button:last-child:hover {
+  border-color: var(--coral);
+  color: var(--coral);
+  background: var(--coral-soft);
+}
+.budget-actions button:disabled, .budget-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .budget-amounts > div { min-width: 0; }
 .budget-amounts span, .budget-amounts strong { display: block; }
 .budget-amounts span { margin-bottom: 4px; color: var(--muted); font-size: 10px; }
@@ -286,4 +317,44 @@ main { padding: 42px 0 70px; }
   .budget-form { align-items: stretch; flex-direction: column; }
   .budget-grid { grid-template-columns: 1fr; }
   .budget-card { padding: 15px; }
+  .budget-actions button, .budget-action-btn { min-height: 34px; padding: 6px 10px; font-size: 11px; }
+}
+
+@media (max-width: 380px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 0 14px;
+    gap: 10px;
+  }
+  .brand-lockup {
+    width: 100%;
+    min-width: 0;
+  }
+  .brand-lockup h1 {
+    font-size: 15px;
+  }
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    gap: 8px;
+  }
+  .lang-btn {
+    padding: 3px 6px;
+  }
+  .profile-chip strong {
+    font-size: 11px;
+  }
+  .profile-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 9px;
+  }
 }

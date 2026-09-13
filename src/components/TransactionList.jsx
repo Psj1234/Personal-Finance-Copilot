@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { formatCurrency } from '../services/formatters.js'
 
-function formatDate(date) {
-  return new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(`${date}T00:00:00`))
+function formatDate(date, lang = 'en') {
+  const locale = lang === 'hi' ? 'hi-IN' : 'en-IN'
+  return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(`${date}T00:00:00`))
 }
 
 function TransactionList({ transactions }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const currentLang = i18n.resolvedLanguage || i18n.language || 'en'
 
   return (
     <section className="panel transactions-panel" id="transactions">
@@ -28,7 +30,7 @@ function TransactionList({ transactions }) {
               </div>
               <div className="transaction-main">
                 <strong>{transaction.merchant}</strong>
-                <span>{transaction.category || t('transactions.otherCategory')} · {formatDate(transaction.date)}</span>
+                <span>{transaction.category || t('transactions.otherCategory')} · {formatDate(transaction.date, currentLang)}</span>
               </div>
               <strong className={`transaction-amount ${transaction.type}`}>
                 {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}

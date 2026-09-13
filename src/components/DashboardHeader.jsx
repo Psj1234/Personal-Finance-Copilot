@@ -14,10 +14,12 @@ function DashboardHeader() {
         </div>
       </div>
 
-      <nav className="header-nav" aria-label={t('header.navOverview')}>
+      <nav className="header-nav" aria-label={t('header.mainNav')}>
         <a className="active" href="#overview">{t('header.navOverview')}</a>
         <a href="#transactions">{t('header.navTransactions')}</a>
         <a href="#add-transaction">{t('header.navAddTransaction')}</a>
+        <a href="#budgets">{t('header.navBudgets')}</a>
+        <a href="#copilot">{t('header.navCopilot')}</a>
       </nav>
 
       <div className="header-actions">

@@ -2,6 +2,81 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { sendChatMessage } from '../services/api.js'
 
+function formatInlineText(text) {
+  if (!text) return text
+  const parts = text.split(/(\*\*[^*]+\*\*)/g)
+  if (parts.length === 1) return text
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>
+    }
+    return part
+  })
+}
+
+function FormattedMessageContent({ content }) {
+  if (!content) return null
+
+  const lines = content.split('\n')
+  const elements = []
+  let activeList = null
+
+  function flushList() {
+    if (!activeList) return
+    if (activeList.type === 'ul') {
+      elements.push(
+        <ul className="chat-bullet-list" key={`list-${elements.length}`}>
+          {activeList.items.map((item, idx) => (
+            <li key={idx}>{formatInlineText(item)}</li>
+          ))}
+        </ul>
+      )
+    } else {
+      elements.push(
+        <ol className="chat-numbered-list" key={`list-${elements.length}`}>
+          {activeList.items.map((item, idx) => (
+            <li key={idx}>{formatInlineText(item)}</li>
+          ))}
+        </ol>
+      )
+    }
+    activeList = null
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i]
+    const trimmed = rawLine.trim()
+
+    if (!trimmed) {
+      flushList()
+      continue
+    }
+
+    const bulletMatch = trimmed.match(/^[-*•]\s+(.*)$/)
+    const numberMatch = trimmed.match(/^\d+[.)]\s+(.*)$/)
+
+    if (bulletMatch) {
+      if (activeList && activeList.type !== 'ul') flushList()
+      if (!activeList) activeList = { type: 'ul', items: [] }
+      activeList.items.push(bulletMatch[1])
+    } else if (numberMatch) {
+      if (activeList && activeList.type !== 'ol') flushList()
+      if (!activeList) activeList = { type: 'ol', items: [] }
+      activeList.items.push(numberMatch[1])
+    } else {
+      flushList()
+      elements.push(
+        <p key={`p-${elements.length}`}>
+          {formatInlineText(trimmed)}
+        </p>
+      )
+    }
+  }
+
+  flushList()
+  return <div className="formatted-chat-content">{elements}</div>
+}
+
 function FinanceCopilot() {
   const { t } = useTranslation()
   const [messages, setMessages] = useState([])
@@ -91,7 +166,7 @@ function FinanceCopilot() {
               <div className={`message-row ${message.role}`} key={message.id}>
                 <div className="message-bubble">
                   <span className="message-label">{message.role === 'user' ? t('copilot.you') : t('copilot.copilot')}</span>
-                  <p>{message.content}</p>
+                  <FormattedMessageContent content={message.content} />
                 </div>
               </div>
             ))}
