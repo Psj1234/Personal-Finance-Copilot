@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { formatCurrency } from '../services/formatters.js'
 
 function formatDate(date) {
@@ -5,17 +6,19 @@ function formatDate(date) {
 }
 
 function TransactionList({ transactions }) {
+  const { t } = useTranslation()
+
   return (
     <section className="panel transactions-panel" id="transactions">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">ACTIVITY</p>
-          <h2>Recent transactions</h2>
+          <p className="eyebrow">{t('transactions.eyebrow')}</p>
+          <h2>{t('transactions.heading')}</h2>
         </div>
-        <span className="panel-note">Latest 5</span>
+        <span className="panel-note">{t('transactions.note')}</span>
       </div>
       {transactions.length === 0 ? (
-        <div className="empty-state">No transactions yet. Add your first one to start building your picture.</div>
+        <div className="empty-state">{t('transactions.empty')}</div>
       ) : (
         <div className="transaction-list">
           {transactions.map((transaction) => (
@@ -25,7 +28,7 @@ function TransactionList({ transactions }) {
               </div>
               <div className="transaction-main">
                 <strong>{transaction.merchant}</strong>
-                <span>{transaction.category || 'Other'} · {formatDate(transaction.date)}</span>
+                <span>{transaction.category || t('transactions.otherCategory')} · {formatDate(transaction.date)}</span>
               </div>
               <strong className={`transaction-amount ${transaction.type}`}>
                 {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}

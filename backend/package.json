@@ -8,6 +8,8 @@
     "start": "node src/server.js",
     "db:seed": "node src/db/seed.js",
     "db:categorize": "node src/db/categorize-existing.js",
+    "test:digest": "node src/services/digestService.test.js",
+    "test:digest-api": "node src/routes/digest.test.js",
     "test:categorizer": "node src/services/categorizer.test.js",
     "test:rag-retrieval": "node src/services/ragService.test.js",
     "test:rag-answer": "node src/services/ragAnswerService.test.js",

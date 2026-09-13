@@ -1,0 +1,133 @@
+{
+  "header": {
+    "brandEyebrow": "पर्सनल फाइनेंस",
+    "brandTitle": "पर्सनल फाइनेंस कोपायलट",
+    "navOverview": "अवलोकन",
+    "navTransactions": "लेन-देन",
+    "navAddTransaction": "लेन-देन जोड़ें",
+    "profileAccount": "INR खाता",
+    "switchLanguage": "भाषा बदलें",
+    "langEn": "English",
+    "langHi": "हिन्दी"
+  },
+  "welcome": {
+    "eyebrow": "सुप्रभात, आरव",
+    "heading": "आपका पैसा, अब और भी स्पष्ट।",
+    "copy": "क्या आया, क्या गया और कहाँ खर्च हुआ - इसका एक शांत और स्पष्ट दृश्य।",
+    "liveDot": "आपके खाते से लाइव"
+  },
+  "common": {
+    "loadErrorTitle": "डैशबोर्ड लोड नहीं हो सका।",
+    "tryAgain": "पुनः प्रयास करें",
+    "loadingDashboard": "आपकी वित्तीय स्थिति लोड हो रही है...",
+    "footerBrand": "पर्सनल फाइनेंस कोपायलट",
+    "footerTagline": "स्पष्ट और बेहतर निर्णयों के लिए निर्मित।"
+  },
+  "summary": {
+    "financialSummary": "वित्तीय सारांश",
+    "totalIncome": "कुल आय",
+    "totalExpenses": "कुल व्यय",
+    "currentBalance": "वर्तमान शेष",
+    "afterSpending": "रिकॉर्ड किए गए खर्च के बाद",
+    "acrossMonths": "सभी रिकॉर्ड किए गए महीनों में",
+    "largestCategory": "सबसे बड़ा खर्च वर्ग",
+    "noSpendingYet": "अभी तक कोई खर्च नहीं",
+    "addTransactionHint": "इसे यहाँ देखने के लिए लेन-देन जोड़ें"
+  },
+  "chart": {
+    "eyebrow": "कैश फ्लो",
+    "heading": "आय बनाम व्यय",
+    "note": "मासिक दृश्य",
+    "empty": "इस अवधि के लिए कोई मासिक गतिविधि नहीं है।",
+    "income": "आय",
+    "expenses": "व्यय"
+  },
+  "categories": {
+    "eyebrow": "कहाँ खर्च हुआ",
+    "heading": "श्रेणी अनुसार खर्च",
+    "totalSpent": "{{total}} कुल",
+    "empty": "प्रदर्शित करने के लिए अभी कोई श्रेणी नहीं है।",
+    "spent": "खर्च"
+  },
+  "transactions": {
+    "eyebrow": "गतिविधि",
+    "heading": "हालिया लेन-देन",
+    "note": "नवीनतम 5",
+    "empty": "अभी कोई लेन-देन नहीं है। शुरुआत करने के लिए अपना पहला लेन-देन जोड़ें।",
+    "otherCategory": "अन्य"
+  },
+  "transactionForm": {
+    "eyebrow": "एक पल दर्ज करें",
+    "heading": "लेन-देन जोड़ें",
+    "dateLabel": "तारीख",
+    "merchantLabel": "व्यापारी / दुकान",
+    "merchantPlaceholder": "उदा. स्विगी",
+    "amountLabel": "राशि",
+    "typeLabel": "प्रकार",
+    "typeExpense": "व्यय",
+    "typeIncome": "आय",
+    "categoryLabel": "श्रेणी",
+    "categoryAutoDetect": "स्वतः पहचान",
+    "descriptionLabel": "विवरण",
+    "descriptionPlaceholder": "वैकल्पिक नोट",
+    "hint": "अपने खाते को वास्तविकता के करीब रखें।",
+    "saving": "सहेजा जा रहा है...",
+    "saveButton": "लेन-देन सहेजें",
+    "success": "लेन-देन जोड़ा गया और डैशबोर्ड अपडेट हुआ।"
+  },
+  "budgets": {
+    "eyebrow": "सोच-समझकर खर्च करें",
+    "heading": "बजट",
+    "addBudget": "बजट जोड़ें",
+    "chooseCategory": "श्रेणी चुनें",
+    "monthlyLimitLabel": "मासिक सीमा",
+    "monthlyLimitPlaceholder": "उदा. 10000",
+    "saving": "सहेजा जा रहा है...",
+    "saveButton": "बजट सहेजें",
+    "loading": "बजट लोड हो रहे हैं...",
+    "error": "बजट इस समय उपलब्ध नहीं हैं। कृपया पुन: प्रयास करें।",
+    "empty": "अभी कोई बजट नहीं है। अपने खर्च की एक स्पष्ट सीमा तय करने के लिए एक बजट जोड़ें।",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "spent": "खर्च",
+    "limit": "मासिक सीमा",
+    "over": "{{amount}} अधिक",
+    "left": "{{amount}} शेष",
+    "pctUsed": "{{percent}}% उपयोग",
+    "errChooseCategory": "पहले एक श्रेणी चुनें।",
+    "errLimitPositive": "मासिक सीमा शून्य से अधिक होनी चाहिए।",
+    "errBudgetConflict": "उस श्रेणी के लिए पहले से एक बजट मौजूद है।",
+    "errGenericAdd": "वह बजट जोड़ा नहीं जा सका।",
+    "errGenericUpdate": "वह बजट अपडेट नहीं किया जा सका।",
+    "errGenericDelete": "वह बजट हटाया नहीं जा सका।",
+    "successAdded": "बजट जोड़ा गया।",
+    "successUpdated": "बजट अपडेट किया गया।",
+    "successDeleted": "बजट हटाया गया।",
+    "confirmDelete": "क्या आप {{category}} बजट हटाना चाहते हैं?"
+  },
+  "copilot": {
+    "eyebrow": "आपका वित्तीय मार्गदर्शक",
+    "heading": "फाइनेंस कोपायलट",
+    "statusReady": "सहायता के लिए तैयार",
+    "emptyTitle": "अपने खर्चों के बारे में मुझसे कुछ भी पूछें।",
+    "emptyDesc": "मैं आपके रिकॉर्ड किए गए लेन-देन की समीक्षा करूंगा और उत्तर को आपके बहीखाते पर आधारित रखूंगा।",
+    "exampleQuestions": [
+      "मैंने इस महीने खाने पर कितना खर्च किया?",
+      "मैं सबसे ज्यादा कहाँ खर्च कर रहा हूँ?",
+      "मैंने पिछले महीने क्या खर्च किया था?"
+    ],
+    "exampleQuestionsLabel": "उदाहरण प्रश्न",
+    "you": "आप",
+    "copilot": "कोपायलट",
+    "inputPlaceholder": "अपने पैसों के बारे में पूछें...",
+    "send": "भेजें",
+    "thinking": "सोच रहा हूँ...",
+    "disclaimer": "उत्तर आपके खाते में दर्ज लेन-देन पर आधारित हैं।",
+    "emptyQuestionError": "बातचीत शुरू करने के लिए कोई प्रश्न पूछें।",
+    "requestError": "इस समय फाइनेंस कोपायलट से संपर्क करने में असमर्थ।",
+    "srLabel": "फाइनेंस कोपायलट से पूछें",
+    "sendQuestionAria": "प्रश्न भेजें"
+  }
+}

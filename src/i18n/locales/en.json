@@ -1,0 +1,133 @@
+{
+  "header": {
+    "brandEyebrow": "PERSONAL FINANCE",
+    "brandTitle": "Personal Finance Copilot",
+    "navOverview": "Overview",
+    "navTransactions": "Transactions",
+    "navAddTransaction": "Add transaction",
+    "profileAccount": "INR account",
+    "switchLanguage": "Switch language",
+    "langEn": "English",
+    "langHi": "हिन्दी"
+  },
+  "welcome": {
+    "eyebrow": "GOOD MORNING, AARAV",
+    "heading": "Your money, made clearer.",
+    "copy": "A calm view of what came in, what went out, and where it went.",
+    "liveDot": "Live from your ledger"
+  },
+  "common": {
+    "loadErrorTitle": "Couldn't load your dashboard.",
+    "tryAgain": "Try again",
+    "loadingDashboard": "Loading your financial picture...",
+    "footerBrand": "Personal Finance Copilot",
+    "footerTagline": "Built for a clearer next decision."
+  },
+  "summary": {
+    "financialSummary": "Financial summary",
+    "totalIncome": "Total income",
+    "totalExpenses": "Total expenses",
+    "currentBalance": "Current balance",
+    "afterSpending": "After recorded spending",
+    "acrossMonths": "Across all recorded months",
+    "largestCategory": "Largest spending category",
+    "noSpendingYet": "No spending yet",
+    "addTransactionHint": "Add a transaction to see it here"
+  },
+  "chart": {
+    "eyebrow": "CASH FLOW",
+    "heading": "Income vs expenses",
+    "note": "Monthly view",
+    "empty": "No monthly activity for this period.",
+    "income": "Income",
+    "expenses": "Expenses"
+  },
+  "categories": {
+    "eyebrow": "WHERE IT GOES",
+    "heading": "Spending by category",
+    "totalSpent": "{{total}} total",
+    "empty": "No categories to display yet.",
+    "spent": "spent"
+  },
+  "transactions": {
+    "eyebrow": "ACTIVITY",
+    "heading": "Recent transactions",
+    "note": "Latest 5",
+    "empty": "No transactions yet. Add your first one to start building your picture.",
+    "otherCategory": "Other"
+  },
+  "transactionForm": {
+    "eyebrow": "CAPTURE A MOMENT",
+    "heading": "Add transaction",
+    "dateLabel": "Date",
+    "merchantLabel": "Merchant",
+    "merchantPlaceholder": "e.g. Swiggy",
+    "amountLabel": "Amount",
+    "typeLabel": "Type",
+    "typeExpense": "Expense",
+    "typeIncome": "Income",
+    "categoryLabel": "Category",
+    "categoryAutoDetect": "Auto-detect",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional note",
+    "hint": "Keep your ledger close to reality.",
+    "saving": "Saving...",
+    "saveButton": "Save transaction",
+    "success": "Transaction added and dashboard refreshed."
+  },
+  "budgets": {
+    "eyebrow": "SPEND WITH INTENTION",
+    "heading": "Budgets",
+    "addBudget": "Add Budget",
+    "chooseCategory": "Choose category",
+    "monthlyLimitLabel": "Monthly limit",
+    "monthlyLimitPlaceholder": "e.g. 10000",
+    "saving": "Saving...",
+    "saveButton": "Save budget",
+    "loading": "Loading budgets...",
+    "error": "Budgets are unavailable right now. Please try again.",
+    "empty": "No budgets yet. Add one to give your spending a clear boundary.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "spent": "Spent",
+    "limit": "Monthly limit",
+    "over": "{{amount}} over",
+    "left": "{{amount}} left",
+    "pctUsed": "{{percent}}% used",
+    "errChooseCategory": "Choose a category first.",
+    "errLimitPositive": "Monthly limit must be greater than zero.",
+    "errBudgetConflict": "A budget for that category already exists.",
+    "errGenericAdd": "Could not add that budget.",
+    "errGenericUpdate": "Could not update that budget.",
+    "errGenericDelete": "Could not delete that budget.",
+    "successAdded": "Budget added.",
+    "successUpdated": "Budget updated.",
+    "successDeleted": "Budget deleted.",
+    "confirmDelete": "Delete the {{category}} budget?"
+  },
+  "copilot": {
+    "eyebrow": "YOUR FINANCE GUIDE",
+    "heading": "Finance Copilot",
+    "statusReady": "Ready to help",
+    "emptyTitle": "Ask me anything about your spending.",
+    "emptyDesc": "I'll look through your recorded transactions and keep the answer grounded in your ledger.",
+    "exampleQuestions": [
+      "How much did I spend on food this month?",
+      "Where am I spending the most?",
+      "What did I spend last month?"
+    ],
+    "exampleQuestionsLabel": "Example questions",
+    "you": "You",
+    "copilot": "Copilot",
+    "inputPlaceholder": "Ask about your money...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "disclaimer": "Answers are based on the transactions in your ledger.",
+    "emptyQuestionError": "Ask a question to start the conversation.",
+    "requestError": "Unable to reach Finance Copilot right now.",
+    "srLabel": "Ask Finance Copilot",
+    "sendQuestionAria": "Send question"
+  }
+}

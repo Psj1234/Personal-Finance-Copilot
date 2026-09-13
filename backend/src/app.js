@@ -3,6 +3,7 @@ import express from 'express'
 import analyticsRouter from './routes/analytics.js'
 import budgetsRouter from './routes/budgets.js'
 import chatRouter from './routes/chat.js'
+import digestRouter from './routes/digest.js'
 import transactionsRouter from './routes/transactions.js'
 
 const app = express()
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use('/api/analytics', analyticsRouter)
 app.use('/api/budgets', budgetsRouter)
 app.use('/api/chat', chatRouter)
+app.use('/api/digest', digestRouter)
 app.use('/api/transactions', transactionsRouter)
 
 app.get('/api/health', (_request, response) => {

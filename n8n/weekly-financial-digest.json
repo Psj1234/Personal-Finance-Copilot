@@ -1,0 +1,127 @@
+{
+  "name": "Weekly Financial Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                "1"
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "e4b6c310-8d51-4682-824f-a496f8c7b801",
+      "name": "Schedule: Monday 8:00 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:3001/api/digest/weekly",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "startDate",
+              "value": "={{ (() => { const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 7 : day; const end = new Date(now.getTime() - diff * 86400000); const start = new Date(end.getTime() - 6 * 86400000); return start.toISOString().slice(0, 10); })() }}"
+            },
+            {
+              "name": "endDate",
+              "value": "={{ (() => { const now = new Date(); const day = now.getDay(); const diff = day === 0 ? 7 : day; const end = new Date(now.getTime() - diff * 86400000); return end.toISOString().slice(0, 10); })() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3e2154a-7140-4279-8d76-f5a01948d902",
+      "name": "Fetch Weekly Digest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format currency in INR (₹) representation\nconst formatINR = (val) => (Number(val || 0) < 0 ? '-₹' : '₹') + Math.abs(Number(val || 0)).toLocaleString('en-IN', { maximumFractionDigits: 2 });\n\nconst digest = $input.first().json;\nconst { period, user, summary, largestExpense, topCategories, budgetAlerts } = digest;\n\n// Construct email / notification subject\nconst subject = `Weekly Financial Digest (${period.startDate} to ${period.endDate}) - ${user.name}`;\n\n// Construct human-readable digest text\nlet text = `📊 WEEKLY FINANCIAL DIGEST\\n`;\ntext += `Period: ${period.startDate} to ${period.endDate} (${period.days} days)\\n`;\ntext += `Account: ${user.name} (${user.currency})\\n`;\ntext += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\\n`;\ntext += `💰 SUMMARY\\n`;\ntext += `• Total Income:    ${formatINR(summary.totalIncome)}\\n`;\ntext += `• Total Expenses:  ${formatINR(summary.totalExpenses)}\\n`;\ntext += `• Net Savings:     ${formatINR(summary.netSavings)}\\n`;\ntext += `• Transactions:    ${summary.transactionCount}\\n`;\n\nif (largestExpense) {\n  text += `\\n🏷️ LARGEST EXPENSE\\n`;\n  text += `• Merchant: ${largestExpense.merchant}\\n`;\n  text += `• Amount:   ${formatINR(largestExpense.amount)}\\n`;\n  text += `• Category: ${largestExpense.category}\\n`;\n  text += `• Date:     ${largestExpense.date}\\n`;\n} else {\n  text += `\\n🏷️ LARGEST EXPENSE: None recorded this week\\n`;\n}\n\ntext += `\\n📂 SPENDING BY CATEGORY\\n`;\nif (Array.isArray(topCategories) && topCategories.length > 0) {\n  topCategories.forEach((cat, idx) => {\n    text += `${idx + 1}. ${cat.category.padEnd(14)} ${formatINR(cat.amount).padStart(10)}  (${cat.percentageOfSpend.toFixed(1)}%)\\n`;\n  });\n} else {\n  text += `No expense transactions recorded during this period.\\n`;\n}\n\ntext += `\\n⚠️ BUDGET ALERTS (${period.endDate.slice(0, 7)})\\n`;\nif (Array.isArray(budgetAlerts) && budgetAlerts.length > 0) {\n  budgetAlerts.forEach((alert) => {\n    const badge = alert.status === 'exceeded' ? '🚨 EXCEEDED' : '⚠️ WARNING ';\n    text += `[${badge}] ${alert.category}: ${formatINR(alert.spent)} / ${formatINR(alert.monthlyLimit)} (${alert.percentageUsed.toFixed(1)}% used)\\n`;\n  });\n} else {\n  text += `All monthly budgets are healthy (< 80% used).\\n`;\n}\n\ntext += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\\n`;\ntext += `Generated automatically by Personal Finance Copilot`;\n\nreturn [{\n  json: {\n    subject,\n    text,\n    period,\n    user,\n    summary,\n    largestExpense,\n    topCategories,\n    budgetAlerts,\n    generatedAt: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "c89b213f-9174-42f1-bbfa-3467f9d8a103",
+      "name": "Format Financial Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d74a91c2-6320-4df2-a9b8-c923f5b8e104",
+      "name": "Digest Output (Notification Placeholder)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule: Monday 8:00 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Weekly Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Weekly Digest": {
+      "main": [
+        [
+          {
+            "node": "Format Financial Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Financial Digest": {
+      "main": [
+        [
+          {
+            "node": "Digest Output (Notification Placeholder)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f72a4501-1b73-4c59-bf72-87163c46e291",
+  "meta": {
+    "instanceId": "personal-finance-copilot-local"
+  },
+  "id": "WeeklyFinancialDigestWorkflow",
+  "tags": []
+}

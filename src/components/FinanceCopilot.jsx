@@ -1,18 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { sendChatMessage } from '../services/api.js'
 
-const exampleQuestions = [
-  'How much did I spend on food this month?',
-  'Where am I spending the most?',
-  'What did I spend last month?',
-]
-
 function FinanceCopilot() {
+  const { t } = useTranslation()
   const [messages, setMessages] = useState([])
   const [question, setQuestion] = useState('')
   const [isSending, setIsSending] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(null)
   const messagesEndRef = useRef(null)
+
+  const exampleQuestions = t('copilot.exampleQuestions', { returnObjects: true }) || []
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
@@ -22,12 +20,12 @@ function FinanceCopilot() {
     const trimmedQuestion = nextQuestion.trim()
     if (!trimmedQuestion || isSending) {
       if (!trimmedQuestion) {
-        setError('Ask a question to start the conversation.')
+        setError({ key: 'copilot.emptyQuestionError' })
       }
       return
     }
 
-    setError('')
+    setError(null)
     setQuestion('')
     setMessages((currentMessages) => [
       ...currentMessages,
@@ -42,7 +40,7 @@ function FinanceCopilot() {
         { id: `${Date.now()}-assistant`, role: 'assistant', content: result.answer },
       ])
     } catch (requestError) {
-      setError(requestError.message || 'Unable to reach Finance Copilot right now.')
+      setError({ message: requestError.message || t('copilot.requestError') })
     } finally {
       setIsSending(false)
     }
@@ -66,21 +64,21 @@ function FinanceCopilot() {
         <div className="copilot-title-lockup">
           <span className="copilot-icon" aria-hidden="true">✦</span>
           <div>
-            <p className="eyebrow">YOUR FINANCE GUIDE</p>
-            <h2 id="copilot-title">Finance Copilot</h2>
+            <p className="eyebrow">{t('copilot.eyebrow')}</p>
+            <h2 id="copilot-title">{t('copilot.heading')}</h2>
           </div>
         </div>
-        <span className="copilot-status"><span className="live-dot" /> Ready to help</span>
+        <span className="copilot-status"><span className="live-dot" /> {t('copilot.statusReady')}</span>
       </div>
 
       <div className="chat-window" aria-live="polite">
         {messages.length === 0 ? (
           <div className="chat-empty-state">
             <div className="chat-empty-mark" aria-hidden="true">?</div>
-            <h3>Ask me anything about your spending.</h3>
-            <p>I&apos;ll look through your recorded transactions and keep the answer grounded in your ledger.</p>
+            <h3>{t('copilot.emptyTitle')}</h3>
+            <p>{t('copilot.emptyDesc')}</p>
             <div className="question-suggestions" aria-label="Example questions">
-              {exampleQuestions.map((example) => (
+              {Array.isArray(exampleQuestions) && exampleQuestions.map((example) => (
                 <button type="button" key={example} onClick={() => submitQuestion(example)} disabled={isSending}>
                   {example}
                 </button>
@@ -92,7 +90,7 @@ function FinanceCopilot() {
             {messages.map((message) => (
               <div className={`message-row ${message.role}`} key={message.id}>
                 <div className="message-bubble">
-                  <span className="message-label">{message.role === 'user' ? 'You' : 'Copilot'}</span>
+                  <span className="message-label">{message.role === 'user' ? t('copilot.you') : t('copilot.copilot')}</span>
                   <p>{message.content}</p>
                 </div>
               </div>
@@ -100,7 +98,7 @@ function FinanceCopilot() {
             {isSending ? (
               <div className="message-row assistant">
                 <div className="message-bubble loading-bubble" role="status">
-                  <span className="message-label">Copilot</span>
+                  <span className="message-label">{t('copilot.copilot')}</span>
                   <span className="typing-dots"><i /><i /><i /></span>
                 </div>
               </div>
@@ -110,25 +108,29 @@ function FinanceCopilot() {
         )}
       </div>
 
-      {error ? <p className="chat-error" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="chat-error" role="alert">
+          {error.key ? t(error.key) : error.message}
+        </p>
+      ) : null}
       <form className="chat-composer" onSubmit={handleSubmit}>
-        <label className="sr-only" htmlFor="copilot-question">Ask Finance Copilot</label>
+        <label className="sr-only" htmlFor="copilot-question">{t('copilot.srLabel')}</label>
         <input
           id="copilot-question"
           type="text"
           value={question}
-          onChange={(event) => { setQuestion(event.target.value); setError('') }}
+          onChange={(event) => { setQuestion(event.target.value); setError(null) }}
           onKeyDown={handleKeyDown}
-          placeholder="Ask about your money..."
+          placeholder={t('copilot.inputPlaceholder')}
           disabled={isSending}
           autoComplete="off"
         />
-        <button type="submit" disabled={isSending || !question.trim()} aria-label="Send question">
-          <span>{isSending ? 'Thinking...' : 'Send'}</span>
+        <button type="submit" disabled={isSending || !question.trim()} aria-label={t('copilot.sendQuestionAria')}>
+          <span>{isSending ? t('copilot.thinking') : t('copilot.send')}</span>
           <span aria-hidden="true">↗</span>
         </button>
       </form>
-      <p className="chat-disclaimer">Answers are based on the transactions in your ledger.</p>
+      <p className="chat-disclaimer">{t('copilot.disclaimer')}</p>
     </section>
   )
 }

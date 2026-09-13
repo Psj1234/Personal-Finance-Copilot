@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createBudget, deleteBudget, getBudgets, updateBudget } from '../services/api.js'
 import { formatCurrency } from '../services/formatters.js'
 
@@ -11,15 +12,11 @@ function progressState(percentage) {
   return 'healthy'
 }
 
-function friendlyError(error, fallback) {
-  if (error.status === 409) return 'A budget for that category already exists.'
-  return error.message || fallback
-}
-
 function Budgets() {
+  const { t } = useTranslation()
   const [budgets, setBudgets] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState(null)
@@ -27,14 +24,19 @@ function Budgets() {
   const [isMutating, setIsMutating] = useState(false)
   const [feedback, setFeedback] = useState(null)
 
+  function friendlyError(apiError, fallbackKey) {
+    if (apiError.status === 409) return { key: 'budgets.errBudgetConflict' }
+    return { message: apiError.message || t(fallbackKey) }
+  }
+
   async function loadBudgets() {
     setIsLoading(true)
-    setError('')
+    setError(null)
     try {
       const result = await getBudgets()
       setBudgets(result.budgets || [])
     } catch {
-      setError('Budgets are unavailable right now. Please try again.')
+      setError({ key: 'budgets.error' })
     } finally {
       setIsLoading(false)
     }
@@ -48,7 +50,7 @@ function Budgets() {
         if (isCurrent) setBudgets(result.budgets || [])
       })
       .catch(() => {
-        if (isCurrent) setError('Budgets are unavailable right now. Please try again.')
+        if (isCurrent) setError({ key: 'budgets.error' })
       })
       .finally(() => {
         if (isCurrent) setIsLoading(false)
@@ -67,11 +69,11 @@ function Budgets() {
     event.preventDefault()
     const monthlyLimit = Number(form.monthlyLimit)
     if (!form.category) {
-      setFeedback({ type: 'error', message: 'Choose a category first.' })
+      setFeedback({ type: 'error', key: 'budgets.errChooseCategory' })
       return
     }
     if (!Number.isFinite(monthlyLimit) || monthlyLimit <= 0) {
-      setFeedback({ type: 'error', message: 'Monthly limit must be greater than zero.' })
+      setFeedback({ type: 'error', key: 'budgets.errLimitPositive' })
       return
     }
 
@@ -81,10 +83,11 @@ function Budgets() {
       await createBudget({ category: form.category, monthlyLimit })
       setForm(initialForm)
       setIsFormOpen(false)
-      setFeedback({ type: 'success', message: 'Budget added.' })
+      setFeedback({ type: 'success', key: 'budgets.successAdded' })
       await loadBudgets()
     } catch (createError) {
-      setFeedback({ type: 'error', message: friendlyError(createError, 'Could not add that budget.') })
+      const err = friendlyError(createError, 'budgets.errGenericAdd')
+      setFeedback({ type: 'error', ...err })
     } finally {
       setIsMutating(false)
     }
@@ -99,7 +102,7 @@ function Budgets() {
   async function handleUpdate(budgetId) {
     const monthlyLimit = Number(editingLimit)
     if (!Number.isFinite(monthlyLimit) || monthlyLimit <= 0) {
-      setFeedback({ type: 'error', message: 'Monthly limit must be greater than zero.' })
+      setFeedback({ type: 'error', key: 'budgets.errLimitPositive' })
       return
     }
 
@@ -108,26 +111,28 @@ function Budgets() {
     try {
       await updateBudget(budgetId, { monthlyLimit })
       setEditingId(null)
-      setFeedback({ type: 'success', message: 'Budget updated.' })
+      setFeedback({ type: 'success', key: 'budgets.successUpdated' })
       await loadBudgets()
     } catch (updateError) {
-      setFeedback({ type: 'error', message: friendlyError(updateError, 'Could not update that budget.') })
+      const err = friendlyError(updateError, 'budgets.errGenericUpdate')
+      setFeedback({ type: 'error', ...err })
     } finally {
       setIsMutating(false)
     }
   }
 
   async function handleDelete(budget) {
-    if (!window.confirm(`Delete the ${budget.category} budget?`)) return
+    if (!window.confirm(t('budgets.confirmDelete', { category: budget.category }))) return
 
     setIsMutating(true)
     setFeedback(null)
     try {
       await deleteBudget(budget.id)
-      setFeedback({ type: 'success', message: 'Budget deleted.' })
+      setFeedback({ type: 'success', key: 'budgets.successDeleted' })
       await loadBudgets()
     } catch (deleteError) {
-      setFeedback({ type: 'error', message: friendlyError(deleteError, 'Could not delete that budget.') })
+      const err = friendlyError(deleteError, 'budgets.errGenericDelete')
+      setFeedback({ type: 'error', ...err })
     } finally {
       setIsMutating(false)
     }
@@ -139,41 +144,48 @@ function Budgets() {
     <section className="panel budgets-panel" id="budgets" aria-labelledby="budgets-title">
       <div className="panel-heading budgets-heading">
         <div>
-          <p className="eyebrow">SPEND WITH INTENTION</p>
-          <h2 id="budgets-title">Budgets</h2>
+          <p className="eyebrow">{t('budgets.eyebrow')}</p>
+          <h2 id="budgets-title">{t('budgets.heading')}</h2>
         </div>
         <button className="add-budget-button" type="button" onClick={() => { setIsFormOpen((open) => !open); setFeedback(null) }}>
-          <span aria-hidden="true">+</span> Add Budget
+          <span aria-hidden="true">+</span> {t('budgets.addBudget')}
         </button>
       </div>
 
-      {feedback ? <p className={`budget-feedback ${feedback.type}`} role="status">{feedback.message}</p> : null}
+      {feedback ? (
+        <p className={`budget-feedback ${feedback.type}`} role="status">
+          {feedback.key ? t(feedback.key) : feedback.message}
+        </p>
+      ) : null}
 
       {isFormOpen ? (
         <form className="budget-form" onSubmit={handleCreate}>
           <label>
-            Category
+            {t('transactionForm.categoryLabel')}
             <select name="category" value={form.category} onChange={updateForm} required>
-              <option value="">Choose category</option>
+              <option value="">{t('budgets.chooseCategory')}</option>
               {availableCategories.map((category) => <option key={category} value={category}>{category}</option>)}
             </select>
           </label>
           <label>
-            Monthly limit
-            <input name="monthlyLimit" type="number" min="0.01" step="0.01" value={form.monthlyLimit} onChange={updateForm} placeholder="e.g. 10000" required />
+            {t('budgets.monthlyLimitLabel')}
+            <input name="monthlyLimit" type="number" min="0.01" step="0.01" value={form.monthlyLimit} onChange={updateForm} placeholder={t('budgets.monthlyLimitPlaceholder')} required />
           </label>
           <button className="submit-button" type="submit" disabled={isMutating || availableCategories.length === 0}>
-            {isMutating ? 'Saving...' : 'Save budget'}
+            {isMutating ? t('budgets.saving') : t('budgets.saveButton')}
           </button>
         </form>
       ) : null}
 
       {isLoading ? (
-        <div className="budget-loading" role="status"><span className="loading-spinner" /> Loading budgets...</div>
+        <div className="budget-loading" role="status"><span className="loading-spinner" /> {t('budgets.loading')}</div>
       ) : error ? (
-        <div className="budget-error" role="alert"><span>{error}</span><button type="button" onClick={loadBudgets}>Try again</button></div>
+        <div className="budget-error" role="alert">
+          <span>{error.key ? t(error.key) : error.message}</span>
+          <button type="button" onClick={loadBudgets}>{t('common.tryAgain')}</button>
+        </div>
       ) : budgets.length === 0 ? (
-        <div className="empty-state budget-empty">No budgets yet. Add one to give your spending a clear boundary.</div>
+        <div className="empty-state budget-empty">{t('budgets.empty')}</div>
       ) : (
         <div className="budget-grid">
           {budgets.map((budget) => {
@@ -187,26 +199,46 @@ function Budgets() {
                   <div className="budget-actions">
                     {isEditing ? (
                       <>
-                        <button type="button" onClick={() => handleUpdate(budget.id)} disabled={isMutating}>Save</button>
-                        <button type="button" onClick={() => setEditingId(null)} disabled={isMutating}>Cancel</button>
+                        <button type="button" onClick={() => handleUpdate(budget.id)} disabled={isMutating}>{t('budgets.save')}</button>
+                        <button type="button" onClick={() => setEditingId(null)} disabled={isMutating}>{t('budgets.cancel')}</button>
                       </>
                     ) : (
                       <>
-                        <button type="button" onClick={() => startEditing(budget)}>Edit</button>
-                        <button type="button" onClick={() => handleDelete(budget)} disabled={isMutating}>Delete</button>
+                        <button type="button" onClick={() => startEditing(budget)}>{t('budgets.edit')}</button>
+                        <button type="button" onClick={() => handleDelete(budget)} disabled={isMutating}>{t('budgets.delete')}</button>
                       </>
                     )}
                   </div>
                 </div>
                 <div className="budget-amounts">
-                  <div><span>Spent</span><strong>{formatCurrency(budget.spent)}</strong></div>
+                  <div><span>{t('budgets.spent')}</span><strong>{formatCurrency(budget.spent)}</strong></div>
                   <div className="budget-limit-value">
-                    <span>Monthly limit</span>
-                    {isEditing ? <input aria-label={`${budget.category} monthly limit`} type="number" min="0.01" step="0.01" value={editingLimit} onChange={(event) => setEditingLimit(event.target.value)} /> : <strong>{formatCurrency(budget.monthlyLimit)}</strong>}
+                    <span>{t('budgets.limit')}</span>
+                    {isEditing ? (
+                      <input
+                        aria-label={`${budget.category} ${t('budgets.limit')}`}
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={editingLimit}
+                        onChange={(event) => setEditingLimit(event.target.value)}
+                      />
+                    ) : (
+                      <strong>{formatCurrency(budget.monthlyLimit)}</strong>
+                    )}
                   </div>
                 </div>
-                <div className="budget-progress-track" aria-label={`${budget.percentageUsed}% used`}><span style={{ width: `${visualPercentage}%` }} /></div>
-                <div className="budget-card-footer"><span className="budget-remaining">{budget.remaining < 0 ? `${formatCurrency(Math.abs(budget.remaining))} over` : `${formatCurrency(budget.remaining)} left`}</span><strong>{budget.percentageUsed.toFixed(2)}%</strong></div>
+                <div className="budget-progress-track" aria-label={t('budgets.pctUsed', { percent: budget.percentageUsed.toFixed(0) })}>
+                  <span style={{ width: `${visualPercentage}%` }} />
+                </div>
+                <div className="budget-card-footer">
+                  <span className="budget-remaining">
+                    {budget.remaining < 0
+                      ? t('budgets.over', { amount: formatCurrency(Math.abs(budget.remaining)) })
+                      : t('budgets.left', { amount: formatCurrency(budget.remaining) })}
+                  </span>
+                  <strong>{budget.percentageUsed.toFixed(2)}%</strong>
+                </div>
               </article>
             )
           })}

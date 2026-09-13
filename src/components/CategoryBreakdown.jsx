@@ -1,22 +1,24 @@
+import { useTranslation } from 'react-i18next'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCurrency } from '../services/formatters.js'
 
 const colors = ['#2f806c', '#e28a5c', '#d7ad5d', '#6c8f9e', '#a36b8c', '#839d63', '#bf785d', '#58756e', '#b8a078']
 
 function CategoryBreakdown({ data }) {
+  const { t } = useTranslation()
   const total = data.reduce((sum, item) => sum + item.amount, 0)
 
   return (
     <section className="panel category-panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">WHERE IT GOES</p>
-          <h2>Spending by category</h2>
+          <p className="eyebrow">{t('categories.eyebrow')}</p>
+          <h2>{t('categories.heading')}</h2>
         </div>
-        <span className="panel-note">{formatCurrency(total)} total</span>
+        <span className="panel-note">{t('categories.totalSpent', { total: formatCurrency(total) })}</span>
       </div>
       {data.length === 0 ? (
-        <div className="empty-state chart-empty">No categories to display yet.</div>
+        <div className="empty-state chart-empty">{t('categories.empty')}</div>
       ) : (
         <div className="category-content">
           <div className="donut-wrap">
@@ -30,7 +32,7 @@ function CategoryBreakdown({ data }) {
             </ResponsiveContainer>
             <div className="donut-total">
               <strong>{formatCurrency(total)}</strong>
-              <span>spent</span>
+              <span>{t('categories.spent')}</span>
             </div>
           </div>
           <div className="category-legend">

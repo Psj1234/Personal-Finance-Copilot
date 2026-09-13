@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import CategoryBreakdown from './components/CategoryBreakdown.jsx'
 import Budgets from './components/Budgets.jsx'
 import DashboardHeader from './components/DashboardHeader.jsx'
@@ -18,6 +19,7 @@ const emptyDashboard = {
 }
 
 function App() {
+  const { t } = useTranslation()
   const [dashboard, setDashboard] = useState(emptyDashboard)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -79,28 +81,28 @@ function App() {
       <main>
         <section className="welcome-band" id="overview">
           <div>
-            <p className="eyebrow">GOOD MORNING, AARAV</p>
-            <h2>Your money, made clearer.</h2>
-            <p className="welcome-copy">A calm view of what came in, what went out, and where it went.</p>
+            <p className="eyebrow">{t('welcome.eyebrow')}</p>
+            <h2>{t('welcome.heading')}</h2>
+            <p className="welcome-copy">{t('welcome.copy')}</p>
           </div>
           <div className="date-stamp">
             <span className="live-dot" />
-            <span>Live from your ledger</span>
+            <span>{t('welcome.liveDot')}</span>
           </div>
         </section>
 
         {error ? (
           <section className="error-banner" role="alert">
-            <strong>Couldn&apos;t load your dashboard.</strong>
+            <strong>{t('common.loadErrorTitle')}</strong>
             <span>{error}</span>
-            <button type="button" onClick={loadDashboard}>Try again</button>
+            <button type="button" onClick={loadDashboard}>{t('common.tryAgain')}</button>
           </section>
         ) : null}
 
         {isLoading ? (
           <div className="loading-state" role="status">
             <span className="loading-spinner" />
-            Loading your financial picture...
+            {t('common.loadingDashboard')}
           </div>
         ) : (
           <>
@@ -119,8 +121,8 @@ function App() {
         )}
       </main>
       <footer className="app-footer">
-        <span>Personal Finance Copilot</span>
-        <span>Built for a clearer next decision.</span>
+        <span>{t('common.footerBrand')}</span>
+        <span>{t('common.footerTagline')}</span>
       </footer>
     </div>
   )
