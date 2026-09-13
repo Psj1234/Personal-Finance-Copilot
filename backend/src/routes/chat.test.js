@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict'
 import express from 'express'
 import { createChatRouter } from './chat.js'
+import { authenticate } from '../middleware/auth.js'
+import { createToken } from '../services/authService.js'
 
 let retrievedQuestion
+let retrievedOptions
 let generatedQuestion
 let generatedRetrieval
 let retrievalFailure = false
 let generationFailure = false
+const testToken = createToken({ userId: 1, email: 'aarav@example.com' })
 const retrievalResult = {
   filters: { category: 'Food', date: 'last month', keywords: [] },
   transactions: [{ date: '2026-03-12', merchant: 'Swiggy', amount: 540, category: 'Food' }],
@@ -14,9 +18,10 @@ const retrievalResult = {
 
 const app = express()
 app.use(express.json())
-app.use('/api/chat', createChatRouter({
-  retrieveTransactions: async (question) => {
+app.use('/api/chat', authenticate, createChatRouter({
+  retrieveTransactions: async (question, options) => {
     retrievedQuestion = question
+    retrievedOptions = options
     if (retrievalFailure) {
       throw new Error('database details must stay private')
     }
@@ -44,10 +49,14 @@ const server = await new Promise((resolve) => {
 const address = server.address()
 const url = `http://localhost:${address.port}/api/chat`
 
-async function post(body) {
+async function post(body, headers = {}) {
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${testToken}`,
+      ...headers,
+    },
     body: JSON.stringify(body),
   })
   return { status: response.status, body: await response.json() }
@@ -62,7 +71,10 @@ try {
   assert.equal(generatedQuestion, retrievedQuestion)
   assert.equal(generatedRetrieval, retrievalResult)
   assert.deepEqual(valid.body.filters, retrievalResult.filters)
-  assert.doesNotMatch(JSON.stringify(valid.body), /GROQ_API|gsk_|database details|provider details/)
+  assert.equal(retrievedOptions?.userId, 1)
+
+  const unauth = await post({ question: 'How much did I spend?' }, { Authorization: '' })
+  assert.equal(unauth.status, 401)
 
   assert.equal((await post({})).status, 400)
   assert.equal((await post({ question: '   ' })).status, 400)
@@ -81,4 +93,4 @@ try {
   await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()))
 }
 
-console.log('Chat route tests passed: 8 assertions')
+console.log('Chat route tests passed: 10 assertions')

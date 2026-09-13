@@ -4,9 +4,6 @@ import db from '../db/database.js'
 const router = express.Router()
 const datePattern = /^\d{4}-\d{2}-\d{2}$/
 
-function getDemoUser() {
-  return db.prepare('SELECT id FROM users ORDER BY id LIMIT 1').get()
-}
 
 function isValidDate(date) {
   if (!datePattern.test(date)) {
@@ -60,13 +57,7 @@ function toNumber(value) {
 router.get('/summary', (request, response, next) => {
   try {
     const { startDate, endDate } = getDateRange(request)
-    const demoUser = getDemoUser()
-
-    if (!demoUser) {
-      return response.status(404).json({ error: 'Demo user not found' })
-    }
-
-    const { whereClause, parameters } = getDateConditions(demoUser.id, startDate, endDate)
+    const { whereClause, parameters } = getDateConditions(request.user.id, startDate, endDate)
     const summary = db
       .prepare(`
         SELECT
@@ -129,11 +120,6 @@ router.get('/summary', (request, response, next) => {
 
 router.get('/forecast', (request, response, next) => {
   try {
-    const demoUser = getDemoUser()
-    if (!demoUser) {
-      return response.status(404).json({ error: 'Demo user not found' })
-    }
-
     const monthlyExpenses = db
       .prepare(`
         SELECT
@@ -145,7 +131,7 @@ router.get('/forecast', (request, response, next) => {
         ORDER BY month DESC
         LIMIT 3
       `)
-      .all(demoUser.id)
+      .all(request.user.id)
     const averageMonthlyExpense = monthlyExpenses.length
       ? monthlyExpenses.reduce((total, month) => total + month.expenses, 0) / monthlyExpenses.length
       : 0

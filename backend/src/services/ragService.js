@@ -37,6 +37,7 @@ const ignoredKeywords = new Set([
   'an',
   'and',
   'any',
+  'at',
   'did',
   'do',
   'expense',
@@ -168,30 +169,36 @@ function parseLimit(limit) {
   return Math.min(parsedLimit, maxLimit)
 }
 
-function getDemoUser() {
-  return db.prepare('SELECT id FROM users ORDER BY id LIMIT 1').get()
-}
-
 function retrieveTransactions(question, options = {}) {
+  const opts = typeof options === 'number' ? { userId: options } : (options || {})
   const normalizedQuestion = normalizeQuestion(question)
-  const limit = parseLimit(options.limit)
-  const currentDate = options.currentDate || formatDate(new Date())
+  const limit = parseLimit(opts.limit)
+  const currentDate = opts.currentDate || formatDate(new Date())
   const dateFilters = getDateFilters(normalizedQuestion, currentDate)
   const category = getCategory(normalizedQuestion)
   const keywordTerms = getKeywordTerms(normalizedQuestion, category)
-  const demoUser = getDemoUser()
 
-  if (!demoUser) {
+  const rawUserId = opts.userId
+  const parsedUserId = Number(rawUserId)
+
+  if (!rawUserId || !Number.isInteger(parsedUserId) || parsedUserId < 1) {
     return {
       question: String(question || ''),
-      filters: { category: category ? capitalize(category) : null, ...dateFilters, keywords: keywordTerms },
+      filters: {
+        category: category ? capitalize(category) : null,
+        date: dateFilters.dateLabel || null,
+        startDate: dateFilters.startDate || null,
+        endDate: dateFilters.endDate || null,
+        keywords: keywordTerms,
+        limit,
+      },
       transactions: [],
       count: 0,
     }
   }
 
   const conditions = ['user_id = ?']
-  const parameters = [demoUser.id]
+  const parameters = [parsedUserId]
   if (category) {
     conditions.push('LOWER(category) = ?')
     parameters.push(category)

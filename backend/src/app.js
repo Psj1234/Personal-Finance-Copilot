@@ -6,17 +6,18 @@ import budgetsRouter from './routes/budgets.js'
 import chatRouter from './routes/chat.js'
 import digestRouter from './routes/digest.js'
 import transactionsRouter from './routes/transactions.js'
+import { authenticate } from './middleware/auth.js'
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use('/api/analytics', analyticsRouter)
+app.use('/api/analytics', authenticate, analyticsRouter)
 app.use('/api/auth', authRouter)
-app.use('/api/budgets', budgetsRouter)
-app.use('/api/chat', chatRouter)
+app.use('/api/budgets', authenticate, budgetsRouter)
+app.use('/api/chat', authenticate, chatRouter)
 app.use('/api/digest', digestRouter)
-app.use('/api/transactions', transactionsRouter)
+app.use('/api/transactions', authenticate, transactionsRouter)
 
 app.get('/api/health', (_request, response) => {
   response.json({

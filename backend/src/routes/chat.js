@@ -16,7 +16,7 @@ function createChatRouter(services = {}) {
         throw error
       }
 
-      const retrievalResult = await retrieve(question)
+      const retrievalResult = await retrieve(question, { userId: request.user?.id })
       const answerResult = await generateAnswer(question, retrievalResult)
 
       if (!answerResult || typeof answerResult.answer !== 'string' || answerResult.errorCode) {

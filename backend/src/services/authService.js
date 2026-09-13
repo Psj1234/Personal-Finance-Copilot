@@ -48,8 +48,24 @@ export function createToken(payload, expiresInMs = DEFAULT_EXPIRES_IN_MS, secret
     throw new Error('Payload must be an object')
   }
 
+  let finalExpiresInMs = DEFAULT_EXPIRES_IN_MS
+  let finalSecret = secret
+
+  if (typeof expiresInMs === 'object' && expiresInMs !== null) {
+    if (expiresInMs.expiresIn !== undefined) {
+      finalExpiresInMs = typeof expiresInMs.expiresIn === 'number' ? expiresInMs.expiresIn * 1000 : Number(expiresInMs.expiresIn)
+    } else if (expiresInMs.expiresInMs !== undefined) {
+      finalExpiresInMs = Number(expiresInMs.expiresInMs)
+    }
+    if (expiresInMs.secret) {
+      finalSecret = expiresInMs.secret
+    }
+  } else if (expiresInMs !== undefined) {
+    finalExpiresInMs = Number(expiresInMs)
+  }
+
   const now = Date.now()
-  const exp = now + Number(expiresInMs)
+  const exp = now + finalExpiresInMs
   const fullPayload = {
     ...payload,
     iat: Math.floor(now / 1000),
@@ -61,7 +77,7 @@ export function createToken(payload, expiresInMs = DEFAULT_EXPIRES_IN_MS, secret
   const encodedPayload = base64UrlEncode(fullPayload)
 
   const signature = crypto
-    .createHmac('sha256', secret)
+    .createHmac('sha256', finalSecret)
     .update(`${encodedHeader}.${encodedPayload}`)
     .digest('base64url')
 

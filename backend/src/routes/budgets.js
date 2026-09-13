@@ -9,9 +9,6 @@ function roundAmount(value) {
   return Number(Number(value || 0).toFixed(2))
 }
 
-function getDemoUser(database) {
-  return database.prepare('SELECT id FROM users ORDER BY id LIMIT 1').get()
-}
 
 function getCurrentMonth(currentDate) {
   const date = typeof currentDate === 'function' ? currentDate() : currentDate
@@ -127,11 +124,6 @@ function createBudgetsRouter(options = {}) {
 
   router.get('/', (request, response, next) => {
     try {
-      const demoUser = getDemoUser(database)
-      if (!demoUser) {
-        return response.status(404).json({ error: 'Demo user not found' })
-      }
-
       const budgets = database
         .prepare(`
           SELECT id, user_id, category, monthly_limit
@@ -139,7 +131,7 @@ function createBudgetsRouter(options = {}) {
           WHERE user_id = ?
           ORDER BY id ASC
         `)
-        .all(demoUser.id)
+        .all(request.user.id)
         .map(getBudgetWithSpending)
 
       response.json({ budgets })
@@ -150,16 +142,11 @@ function createBudgetsRouter(options = {}) {
 
   router.post('/', (request, response, next) => {
     try {
-      const demoUser = getDemoUser(database)
-      if (!demoUser) {
-        return response.status(404).json({ error: 'Demo user not found' })
-      }
-
       const category = parseCategory(request.body?.category)
       const monthlyLimit = parseMonthlyLimit(request.body?.monthlyLimit)
       const existingBudget = database
         .prepare('SELECT id FROM budgets WHERE user_id = ? AND category = ?')
-        .get(demoUser.id, category)
+        .get(request.user.id, category)
 
       if (existingBudget) {
         return response.status(409).json({ error: 'A budget for this category already exists' })
@@ -167,8 +154,8 @@ function createBudgetsRouter(options = {}) {
 
       const result = database
         .prepare('INSERT INTO budgets (user_id, category, monthly_limit) VALUES (?, ?, ?)')
-        .run(demoUser.id, category, monthlyLimit)
-      const createdBudget = getBudget(database, demoUser.id, result.lastInsertRowid)
+        .run(request.user.id, category, monthlyLimit)
+      const createdBudget = getBudget(database, request.user.id, result.lastInsertRowid)
 
       response.status(201).json({ budget: getBudgetWithSpending(createdBudget) })
     } catch (error) {
@@ -178,22 +165,17 @@ function createBudgetsRouter(options = {}) {
 
   router.put('/:id', (request, response, next) => {
     try {
-      const demoUser = getDemoUser(database)
-      if (!demoUser) {
-        return response.status(404).json({ error: 'Demo user not found' })
-      }
-
       const budgetId = parseBudgetId(request.params.id)
       const monthlyLimit = parseMonthlyLimit(request.body?.monthlyLimit)
-      const existingBudget = getBudget(database, demoUser.id, budgetId)
+      const existingBudget = getBudget(database, request.user.id, budgetId)
       if (!existingBudget) {
         return response.status(404).json({ error: 'Budget not found' })
       }
 
       database
         .prepare('UPDATE budgets SET monthly_limit = ? WHERE id = ? AND user_id = ?')
-        .run(monthlyLimit, budgetId, demoUser.id)
-      const updatedBudget = getBudget(database, demoUser.id, budgetId)
+        .run(monthlyLimit, budgetId, request.user.id)
+      const updatedBudget = getBudget(database, request.user.id, budgetId)
 
       response.json({ budget: getBudgetWithSpending(updatedBudget) })
     } catch (error) {
@@ -203,15 +185,10 @@ function createBudgetsRouter(options = {}) {
 
   router.delete('/:id', (request, response, next) => {
     try {
-      const demoUser = getDemoUser(database)
-      if (!demoUser) {
-        return response.status(404).json({ error: 'Demo user not found' })
-      }
-
       const budgetId = parseBudgetId(request.params.id)
       const result = database
         .prepare('DELETE FROM budgets WHERE id = ? AND user_id = ?')
-        .run(budgetId, demoUser.id)
+        .run(budgetId, request.user.id)
       if (result.changes === 0) {
         return response.status(404).json({ error: 'Budget not found' })
       }

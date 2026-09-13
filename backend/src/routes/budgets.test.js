@@ -2,10 +2,14 @@ import assert from 'node:assert/strict'
 import express from 'express'
 import db from '../db/database.js'
 import { createBudgetsRouter } from './budgets.js'
+import { authenticate } from '../middleware/auth.js'
+import { createToken } from '../services/authService.js'
+
+const testToken = createToken({ userId: 1, email: 'aarav@example.com' })
 
 const app = express()
 app.use(express.json())
-app.use('/api/budgets', createBudgetsRouter({ currentDate: '2026-03-31' }))
+app.use('/api/budgets', authenticate, createBudgetsRouter({ currentDate: '2026-03-31' }))
 app.use((error, _request, response, next) => {
   if (response.headersSent) {
     return next(error)
@@ -23,8 +27,12 @@ let createdBudgetId
 
 async function request(path = '', options = {}) {
   const response = await fetch(`${baseUrl}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${testToken}`,
+      ...(options.headers || {}),
+    },
   })
   return { status: response.status, body: response.status === 204 ? null : await response.json() }
 }

@@ -10,9 +10,6 @@ const datePattern = /^\d{4}-\d{2}-\d{2}$/
 const monthPattern = /^\d{4}-(0[1-9]|1[0-2])$/
 const transactionTypes = new Set(['income', 'expense'])
 
-function getDemoUser() {
-  return db.prepare('SELECT id FROM users ORDER BY id LIMIT 1').get()
-}
 
 function isValidDate(date) {
   if (!datePattern.test(date)) {
@@ -125,13 +122,8 @@ router.get('/', (request, response, next) => {
       throw error
     }
 
-    const demoUser = getDemoUser()
-    if (!demoUser) {
-      return response.status(404).json({ error: 'Demo user not found' })
-    }
-
     const conditions = ['user_id = ?']
-    const parameters = [demoUser.id]
+    const parameters = [request.user.id]
 
     if (month) {
       conditions.push('date LIKE ?')
@@ -170,13 +162,33 @@ router.get('/', (request, response, next) => {
   }
 })
 
-router.post('/', async (request, response, next) => {
+router.get('/:id', (request, response, next) => {
   try {
-    const demoUser = getDemoUser()
-    if (!demoUser) {
-      return response.status(404).json({ error: 'Demo user not found' })
+    const id = Number(request.params.id)
+    if (!Number.isInteger(id) || id < 1) {
+      return response.status(404).json({ error: 'Transaction not found' })
     }
 
+    const transaction = db
+      .prepare(`
+        SELECT id, user_id, date, merchant, amount, type, category, raw_description
+        FROM transactions
+        WHERE id = ? AND user_id = ?
+      `)
+      .get(id, request.user.id)
+
+    if (!transaction) {
+      return response.status(404).json({ error: 'Transaction not found' })
+    }
+
+    response.json({ transaction })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.post('/', async (request, response, next) => {
+  try {
     const transaction = validateTransactionInput(request.body)
     const category = await resolveCategory(transaction)
     const result = db
@@ -186,7 +198,7 @@ router.post('/', async (request, response, next) => {
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `)
       .run(
-        demoUser.id,
+        request.user.id,
         transaction.date,
         transaction.merchant,
         transaction.amount,
@@ -198,11 +210,79 @@ router.post('/', async (request, response, next) => {
       .prepare(`
         SELECT id, user_id, date, merchant, amount, type, category, raw_description
         FROM transactions
-        WHERE id = ?
+        WHERE id = ? AND user_id = ?
       `)
-      .get(result.lastInsertRowid)
+      .get(result.lastInsertRowid, request.user.id)
 
     response.status(201).json({ transaction: createdTransaction })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/:id', async (request, response, next) => {
+  try {
+    const id = Number(request.params.id)
+    if (!Number.isInteger(id) || id < 1) {
+      return response.status(404).json({ error: 'Transaction not found' })
+    }
+
+    const existing = db
+      .prepare('SELECT id FROM transactions WHERE id = ? AND user_id = ?')
+      .get(id, request.user.id)
+
+    if (!existing) {
+      return response.status(404).json({ error: 'Transaction not found' })
+    }
+
+    const transaction = validateTransactionInput(request.body)
+    const category = await resolveCategory(transaction)
+
+    db.prepare(`
+      UPDATE transactions
+      SET date = ?, merchant = ?, amount = ?, type = ?, category = ?, raw_description = ?
+      WHERE id = ? AND user_id = ?
+    `).run(
+      transaction.date,
+      transaction.merchant,
+      transaction.amount,
+      transaction.type,
+      category,
+      transaction.rawDescription,
+      id,
+      request.user.id,
+    )
+
+    const updatedTransaction = db
+      .prepare(`
+        SELECT id, user_id, date, merchant, amount, type, category, raw_description
+        FROM transactions
+        WHERE id = ? AND user_id = ?
+      `)
+      .get(id, request.user.id)
+
+    response.json({ transaction: updatedTransaction })
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.delete('/:id', (request, response, next) => {
+  try {
+    const id = Number(request.params.id)
+    if (!Number.isInteger(id) || id < 1) {
+      return response.status(404).json({ error: 'Transaction not found' })
+    }
+
+    const result = db
+      .prepare('DELETE FROM transactions WHERE id = ? AND user_id = ?')
+      .run(id, request.user.id)
+
+    if (result.changes === 0) {
+      return response.status(404).json({ error: 'Transaction not found' })
+    }
+
+    response.status(204).send()
   } catch (error) {
     next(error)
   }
