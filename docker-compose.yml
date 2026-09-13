@@ -1,0 +1,20 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personal-finance-copilot
+    ports:
+      - "${PORT:-3001}:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - GROQ_API=${GROQ_API:-}
+      - JWT_SECRET=${JWT_SECRET:-}
+    volumes:
+      - finance_data:/app/backend/data
+    restart: unless-stopped
+
+volumes:
+  finance_data:
+    name: finance_data

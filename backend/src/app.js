@@ -1,3 +1,6 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import cors from 'cors'
 import express from 'express'
 import analyticsRouter from './routes/analytics.js'
@@ -7,6 +10,10 @@ import chatRouter from './routes/chat.js'
 import digestRouter from './routes/digest.js'
 import transactionsRouter from './routes/transactions.js'
 import { authenticate } from './middleware/auth.js'
+
+const currentDirectory = path.dirname(fileURLToPath(import.meta.url))
+const distPath = path.resolve(currentDirectory, '../../dist')
+const indexPath = path.join(distPath, 'index.html')
 
 const app = express()
 
@@ -25,6 +32,17 @@ app.get('/api/health', (_request, response) => {
     service: 'finance-copilot-api',
   })
 })
+
+// Serve production frontend bundle when dist exists
+if (fs.existsSync(indexPath)) {
+  app.use(express.static(distPath))
+  app.use((request, response, next) => {
+    if (request.method === 'GET' && !request.path.startsWith('/api')) {
+      return response.sendFile(indexPath)
+    }
+    next()
+  })
+}
 
 app.use((_request, response) => {
   response.status(404).json({ error: 'Route not found' })
