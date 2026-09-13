@@ -15,6 +15,7 @@
     "test:rag-answer": "node src/services/ragAnswerService.test.js",
     "test:chat": "node src/routes/chat.test.js",
     "test:budgets": "node src/routes/budgets.test.js",
+    "test:auth": "node src/routes/auth.test.js",
     "test:rag-answer-groq": "node src/services/rag-answer-groq-test.js",
     "test:groq": "node src/services/groq-test.js",
     "test:groq-categorization": "node src/services/groq-categorization-test.js"

@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express from 'express'
 import analyticsRouter from './routes/analytics.js'
+import authRouter from './routes/auth.js'
 import budgetsRouter from './routes/budgets.js'
 import chatRouter from './routes/chat.js'
 import digestRouter from './routes/digest.js'
@@ -11,6 +12,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use('/api/analytics', analyticsRouter)
+app.use('/api/auth', authRouter)
 app.use('/api/budgets', budgetsRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/digest', digestRouter)

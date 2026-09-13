@@ -2,10 +2,13 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import db from './database.js'
+import { hashPassword } from '../services/authService.js'
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url))
 const csvPath = path.resolve(currentDirectory, '../../../data/mock_transactions.csv')
 const demoUserName = 'Aarav Mehta'
+const demoUserEmail = 'aarav@example.com'
+const demoUserPassword = 'password123'
 
 function parseCsv(csv) {
   const [headerLine, ...lines] = csv.trim().split(/\r?\n/)
@@ -20,8 +23,8 @@ function parseCsv(csv) {
 const rows = parseCsv(fs.readFileSync(csvPath, 'utf8'))
 const seed = db.transaction(() => {
   const existingUser = db
-    .prepare('SELECT id FROM users WHERE name = ?')
-    .get(demoUserName)
+    .prepare('SELECT id FROM users WHERE name = ? OR email = ?')
+    .get(demoUserName, demoUserEmail)
 
   if (existingUser) {
     db.prepare('DELETE FROM transactions WHERE user_id = ?').run(existingUser.id)
@@ -30,8 +33,10 @@ const seed = db.transaction(() => {
   }
 
   const userResult = db
-    .prepare('INSERT INTO users (name, currency, locale) VALUES (?, ?, ?)')
-    .run(demoUserName, 'INR', 'en')
+    .prepare(
+      'INSERT INTO users (name, email, password_hash, currency, locale) VALUES (?, ?, ?, ?, ?)',
+    )
+    .run(demoUserName, demoUserEmail, hashPassword(demoUserPassword), 'INR', 'en')
   const userId = userResult.lastInsertRowid
 
   const insertTransaction = db.prepare(`
