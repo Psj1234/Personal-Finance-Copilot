@@ -247,6 +247,8 @@ npm --prefix backend run db:seed
 
 ### 5. Start the Application
 
+**Option A: Native Node Development**
+
 In terminal 1 — Start the Express backend:
 ```bash
 npm run dev:backend
@@ -258,6 +260,22 @@ In terminal 2 — Start the Vite frontend:
 npm run dev
 # Dashboard available at http://localhost:5173
 ```
+
+**Option B: Docker Compose (Unified Production Container)**
+
+Build and start the unified container with persistent SQLite volume:
+```bash
+docker compose up -d --build
+# Application & API available at http://localhost:3001
+```
+
+To seed the demo database inside the container:
+```bash
+docker compose exec app npm --prefix backend run db:seed
+```
+
+SQLite data is persisted across container restarts on the named volume `finance_data:/app/backend/data`.
+To stop the container: `docker compose down`.
 
 ---
 
@@ -401,6 +419,9 @@ finance-copilot/
 │   ├── weekly-financial-digest.json      # n8n workflow definition
 │   └── README.md                         # Workflow setup & testing guide
 │
+├── .dockerignore                         # Docker build context exclusions
+├── Dockerfile                            # Multi-stage production container build
+├── docker-compose.yml                    # Local container orchestration & volume
 ├── package.json
 └── README.md
 ```
@@ -422,8 +443,8 @@ finance-copilot/
 - [x] Server-enforced multi-user data isolation across all routes and services
 - [x] Frontend authentication interface (login, register, session persistence, 401 expiration handling)
 - [x] Automated test suites covering auth, cross-user isolation, budgets, chat, RAG, and digests
+- [x] Containerized deployment configuration (Docker & Docker Compose)
 
 ### 🔄 Roadmap
-- [ ] Containerized deployment configuration (Docker & Docker Compose)
-- [ ] Production environment deployment and monitoring
+- [ ] Production environment cloud deployment and monitoring
 - [ ] Optional automated notification webhooks (Email/Discord/Slack) for the digest workflow
